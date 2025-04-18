@@ -5,7 +5,7 @@ import { Box } from '@mui/joy'
 export default function App() {
   return (
     <Box sx={{ height: '90vh',}}>
-      <SignIn />
+      App
     </Box>
   )
 }
