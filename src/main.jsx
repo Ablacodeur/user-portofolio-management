@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SignIn from './SignIn/SignIn.jsx'
 import SignUp from './SignUp/SignUp.jsx'
+import ForgetPass from './ForgetPass/ForgetPass.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<App />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgetpass" element={<ForgetPass />} />
       </Routes>
     </BrowserRouter>
     </StrictMode>,
