@@ -6,6 +6,7 @@ import SignIn from './SignIn/SignIn.jsx'
 import SignUp from './SignUp/SignUp.jsx'
 import ForgetPass from './ForgetPass/ForgetPass.jsx'
 import ResetPass from './ResetPass/ResetPass.jsx'
+import ProfileSetting from './ProfileSetting/ProfileSetting.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgetpass" element={<ForgetPass />} />
         <Route path="/resetpass" element={<ResetPass />} />
+        <Route path="/profile" element={<ProfileSetting/>} />
 
 
       </Routes>
