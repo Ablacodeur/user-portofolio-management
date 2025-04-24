@@ -16,7 +16,9 @@ export default function ResponsiveAppBar() {
         [],
     );
   return (   
-    <nav class="navbar fixed-top bg-body-tertiary">
+    <Box>
+
+    <nav class="navbar sticky-top  ">
         <div class="container-fluid">
             <Box sx={{ flexDirection:'row', 
             justifyContent:'space-between',
@@ -81,7 +83,11 @@ export default function ResponsiveAppBar() {
             </Box>
             </Box>
         </div>
+        <Box sx={{ width: '100%', borderTop: '1px solid #ccc', margin: '5px 0' }} />
+
     </nav>  
+    </Box>
+
   )
 }
 
