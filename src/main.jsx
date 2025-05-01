@@ -7,9 +7,13 @@ import SignUp from './SignUp/SignUp.jsx'
 import ForgetPass from './ForgetPass/ForgetPass.jsx'
 import ResetPass from './ResetPass/ResetPass.jsx'
 import ProfileSetting from './ProfileSetting/ProfileSetting.jsx'
+import { Provider } from 'react-redux'
+import { store } from './store';
+import ProjectSetting from './ProjectSetting/ProjectSetting.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+  <Provider store={store}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
@@ -18,9 +22,11 @@ createRoot(document.getElementById('root')).render(
         <Route path="/forgetpass" element={<ForgetPass />} />
         <Route path="/resetpass" element={<ResetPass />} />
         <Route path="/profile" element={<ProfileSetting/>} />
+        <Route path="/projectsetting" element={<ProjectSetting />} />
 
 
       </Routes>
     </BrowserRouter>
+    </Provider>  
     </StrictMode>,
 )
