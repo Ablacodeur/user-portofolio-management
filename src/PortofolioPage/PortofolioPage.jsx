@@ -30,7 +30,8 @@ export default function PortofolioPage() {
       <Box sx={{ position:'relative' }}>
         <Box
           sx={{
-            height: '23vh',            
+            height: '23vh',
+            width: '100%',            
             margin: '0',
             padding: 0, 
             backgroundImage: `url(${hero})`,
@@ -40,23 +41,24 @@ export default function PortofolioPage() {
           }}
         >
         </Box>
-        <Box sx={{ marginLeft: { xs: '30px', sm: '100px', md: '300px' },
-                marginRight: { xs: '30px', sm: '100px', md: '300px' }
+        <Box sx={{ marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
+                marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
+                marginTop: {xs:'-60px', md:'-100px'},
+                position: 'absolute',
+                backgroundImage: `url(https://picsum.photos/id/1/200/300)`,
+                zIndex: '1' ,
+                border: '5px solid white',
+                borderRadius: '50%',
+                width: {xs:'120px',md:'200px'}, height:{xs:'120px',md:'200px'},
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+
          }}>
-            <img src='https://picsum.photos/id/1/200/300'
-             alt="Profile" 
-             style={{ width: '200px', height:'200px',
-                    position: 'absolute',
-                    top: '60px', 
-                    zIndex: '1' ,
-                    border: '5px solid white',
-                    borderRadius: '50%',
-            }}             
-        />
 
         </Box>
-        <Box sx={{ marginTop: '100px',marginLeft: { xs: '30px', sm: '100px', md: '300px' },
-         marginRight: { xs: '30px', sm: '100px', md: '300px' },
+        <Box sx={{ marginTop: '100px',marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
+         marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' }, 
          gap: '20px',display: 'flex', 
          flexDirection: 'column', alignItems: 'flex-start' }}>
             <h1 style={{ fontSize: '40px',padding:'0px' }}>Trace Adkins
@@ -87,7 +89,7 @@ export default function PortofolioPage() {
                      variant="outlined"
                      color="neutral"
                         sx={{
-                        width: { xs: '100%', sm: '600px', md: '600px', lg: '800px' },
+                        width: '100%',
                         height: { xs: '15%' },
                         }}
                     >

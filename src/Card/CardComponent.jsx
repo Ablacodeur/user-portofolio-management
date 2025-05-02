@@ -10,11 +10,13 @@ export default function CardComponent({ task ,page }) {
       variant="none"
       sx={{
         width: '100%',
-        height: {xs:'95px', md:'135px'},
+        height: {xs:'300px', md:'135px'},
         borderRadius: '10px',
         padding: '3px',
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: {xs:'column', md:'row'},
+
+
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
@@ -22,10 +24,9 @@ export default function CardComponent({ task ,page }) {
       {/* 📌 ICON PRINCIPAL */}
         <Box
           sx={{
-            width: '40%',
-            height: '100%',
+            width: {xs:'100%', md:'40%'},
+            height: {xs:'60%', md:'100%'},
             display: 'flex',
-            borderRadius: '5px',
             backgroundSize:'cover',
             backgroundPosition: 'center',
             backgroundRepeat:'no-repeat',
@@ -34,8 +35,8 @@ export default function CardComponent({ task ,page }) {
             boxShadow: '0px 0.2px 0px #ccc',
             backgroundImage: `url('https://picsum.photos/id/237/200/300/?blur=4')`,  
             border: '1px solid #ccc',
-            marginTop: '30px',
-            marginBottom: '30px',
+            marginTop: {xs:'5px', md:'30px'},
+            marginBottom: {xs:'3px', md:'30px'},
             borderRadius: '10px',
             
           }}
@@ -45,8 +46,12 @@ export default function CardComponent({ task ,page }) {
           </Box>
         </Box>
       {/* 📌 CONTENU TEXTE */}
-      <Box sx={{ textAlign: 'start', marginLeft: '8px', width: '60%' }}>
-        <CardContent sx={{ padding: '20px' }}>
+      <Box sx={{ 
+        textAlign: 'start', 
+        marginLeft: '8px', 
+        width: { xs:'100%', md:'60%'},
+       }}>
+        <CardContent sx={{ padding: {xs:'0px',md:'20px'}}}>
           <Typography 
           variant="h6" 
           sx={{ fontSize: '1rem', 
@@ -83,15 +88,19 @@ export default function CardComponent({ task ,page }) {
           </Button>):(
             <Box sx={{ display: 'flex', gap: '10px' }}>
             <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
-            <Typography sx={{ display: 'flex', gap: '5px',}}>
+            <Typography sx={{ display: 'flex', gap: '5px',fontSize:{xs:'12px',md:'15px'} }}>
             Demo URL
-            <OpenInNewOutlinedIcon  sx={{ width:'20px',height:'20px', fontSize:'small'}}/>
+            <Stack>
+            <OpenInNewOutlinedIcon  sx={{ width:{xs:'15px', md:'20px'},height:{xs:'15px', md:'20px'}, fontSize:'small'}}/>
+            </Stack>
             </Typography>
           </Button>
           <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
-          <Typography>
+          <Typography sx={{ display: 'flex', gap: '5px',fontSize:{xs:'12px',md:'15px'} }}>
             Repository URL
-            <OpenInNewOutlinedIcon  sx={{ width:'20px',height:'20px', fontSize:'small'}}/>
+            <Stack sx={{ display: 'flex',justifyContent: 'center', alignItems: 'center' }}> 
+            <OpenInNewOutlinedIcon  sx={{ width:{xs:'15px', md:'20px'},height:{xs:'15px', md:'20px'}, fontSize:'small'}}/>
+            </Stack>
 
             </Typography>
           </Button>
