@@ -2,8 +2,9 @@ import { Button, Stack } from '@mui/joy'
 import { Box, Card, CardContent, Typography } from '@mui/material'
 import React from 'react'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
+import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 
-export default function CardComponent({ task }) {
+export default function CardComponent({ task ,page }) {
   return (
     <Card
       variant="none"
@@ -73,12 +74,29 @@ export default function CardComponent({ task }) {
           >
             {task.description}
           </Typography>
+          {page=== 'setting'?(
           <Button variant="contained" sx={{ backgroundColor:'#E3E8EF',marginTop:'20px' }}> 
             <Typography>
             <CreateOutlinedIcon  sx={{ width:'25px',height:'25px', fontSize:'small'}}/>
             Edit
             </Typography>
+          </Button>):(
+            <Box sx={{ display: 'flex', gap: '10px' }}>
+            <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
+            <Typography sx={{ display: 'flex', gap: '5px',}}>
+            Demo URL
+            <OpenInNewOutlinedIcon  sx={{ width:'20px',height:'20px', fontSize:'small'}}/>
+            </Typography>
           </Button>
+          <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
+          <Typography>
+            Repository URL
+            <OpenInNewOutlinedIcon  sx={{ width:'20px',height:'20px', fontSize:'small'}}/>
+
+            </Typography>
+          </Button>
+          </Box>
+          )}
         </CardContent>
       </Box>
 

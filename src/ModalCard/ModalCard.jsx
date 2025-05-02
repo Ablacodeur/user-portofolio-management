@@ -17,7 +17,7 @@ export default function ModalCard({ setGlobalAlert }) {
     const [statusName, setStatusName] = React.useState('');
     const [selectedStatus, setSelectedStatus] = React.useState('');
     const dispatch = useDispatch();
-  
+    const[page, setPage] = useState('setting');
     const projectList = useSelector((store) => store.PROJECT.projectList);
     const [reload, setReload] = React.useState(false);
   
@@ -212,7 +212,7 @@ export default function ModalCard({ setGlobalAlert }) {
                     height: { xs: '15%' },
                   }}
                 >
-                  <CardComponent task={task} />
+                  <CardComponent task={task} page={page} />
                 </Button>
 
                 {/* Contenu conditionnel du "modal" sous la carte */}
