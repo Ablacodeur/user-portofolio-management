@@ -13,7 +13,7 @@ import FormShema from '../FormShema/FormShema';
 export default function ModalCard({ setGlobalAlert }) {
     const [open, setOpen] = React.useState(true);
     const[isedited,setIsedited]=useState(false);
-    const [theTask, setTheTask] = React.useState({});
+    const [theProject, setTheProject] = React.useState({});
     const [statusName, setStatusName] = React.useState('');
     const [selectedStatus, setSelectedStatus] = React.useState('');
     const dispatch = useDispatch();
@@ -34,10 +34,10 @@ export default function ModalCard({ setGlobalAlert }) {
       fetchData();
     }, []);
   
-    function handleClick(task) {
+    function handleClick(project) {
       setOpen(true);
-      if (task) {
-        setTheTask(task);
+      if (project) {
+        setTheProject(project);
       }
     }
   
@@ -45,8 +45,8 @@ export default function ModalCard({ setGlobalAlert }) {
       const { name, value } = e.target;
   
       dispatch(
-        setTheTask({
-          ...theTask,
+        setTheProject({
+          ...theProject,
           [name]: value,
         })
       );
@@ -54,12 +54,12 @@ export default function ModalCard({ setGlobalAlert }) {
       console.log(`Updated ${name}:`, value);
     }
   
-    async function handleDelete(taskId) {
-      if (window.confirm('Do you really want to delete the task?')) {
+    async function handleDelete(projectId) {
+      if (window.confirm('Do you really want to delete the project?')) {
         try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`);
+          await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${projectId}`);
   
-          dispatch(deleteTask(taskId));
+          dispatch(deleteTask(projectId));
           setReload(true);
           setOpen(false);
           setGlobalAlert('delete');
@@ -71,7 +71,7 @@ export default function ModalCard({ setGlobalAlert }) {
   
     const reloadTasks = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/tasks`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
         dispatch(setprojectList(response.data));
       } catch (err) {
         console.error('Erreur lors du rechargement des tâches :', err);
@@ -114,7 +114,7 @@ export default function ModalCard({ setGlobalAlert }) {
               variant="outlined"
               color="neutral"
               onClick={() => {
-                setTheTask({ name: '', description: '', status: '', icon: '' });
+                setTheProject({ name: '', description: '', status: '', icon: '' });
                 setSelectedStatus('');
                 setStatusName('');
                 setOpen(!open);
@@ -186,9 +186,9 @@ export default function ModalCard({ setGlobalAlert }) {
   
               {/* Formulaire */}
               <FormShema 
-                      theTask={theTask}
+                      theProject={theProject}
                       onChange={(e) =>
-                        setTheTask({ ...theTask, [e.target.name]: e.target.value })
+                        setTheProject({ ...theProject, [e.target.name]: e.target.value })
                       }                   
               />
 
@@ -197,14 +197,14 @@ export default function ModalCard({ setGlobalAlert }) {
 
             </Box>
             {/* Liste des tâches */}
-            {projectList.map((task, id) => (
+            {projectList.map((project, id) => (
               <React.Fragment key={id}>
                 {/* Bouton de la carte */}
                 <Button
                   variant="outlined"
                   color="neutral"
                   onClick={() => {
-                    setTheTask(task); 
+                    setTheProject(project); 
                     setIsedited(isedited === id ? null : id); // Ouvre ou ferme la carte cliquée
                   }}
                   sx={{
@@ -212,7 +212,7 @@ export default function ModalCard({ setGlobalAlert }) {
                     height: { xs: '15%' },
                   }}
                 >
-                  <CardComponent task={task} page={page} />
+                  <CardComponent project={project} page={page} />
                 </Button>
 
                 {/* Contenu conditionnel du "modal" sous la carte */}
@@ -265,9 +265,9 @@ export default function ModalCard({ setGlobalAlert }) {
 
                     {/* Formulaire */}
                     <FormShema 
-                      theTask={theTask}
+                      theProject={theProject}
                       onChange={(e) =>
-                        setTheTask({ ...theTask, [e.target.name]: e.target.value })
+                        setTheProject({ ...theProject, [e.target.name]: e.target.value })
                       }
                     />
                   </Box>

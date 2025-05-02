@@ -10,7 +10,7 @@ const app = express();
 
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 const allowedOrigins = [
-  'https://task-list-inky.vercel.app',
+  'https://project-list-inky.vercel.app',
   'http://localhost:5173'
 ];
 
@@ -89,7 +89,7 @@ app.post("/projects", async (req, res) => {
   }
 });
 
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/projects/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const deleteResult = await pool.query('DELETE FROM project WHERE id = $1', [id]);

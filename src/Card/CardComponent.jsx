@@ -4,7 +4,7 @@ import React from 'react'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 
-export default function CardComponent({ task ,page }) {
+export default function CardComponent({ project ,page }) {
   return (
     <Card
       variant="none"
@@ -64,7 +64,7 @@ export default function CardComponent({ task ,page }) {
            }}
           
           >
-            {task.project_name}
+            {project.project_name}
           </Typography>
           <Typography
             variant="body2"
@@ -77,7 +77,7 @@ export default function CardComponent({ task ,page }) {
               WebkitBoxOrient: 'vertical'
             }}
           >
-            {task.description}
+            {project.description}
           </Typography>
           {page=== 'setting'?(
           <Button variant="contained" sx={{ backgroundColor:'#E3E8EF',marginTop:'20px' }}> 

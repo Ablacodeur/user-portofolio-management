@@ -82,7 +82,7 @@ export default function PortofolioPage() {
             <hr style={{ width: '100%', border: '1px solid #989494', marginTop: '20px' }} />
 
         {/* Liste des tâches */}
-            {projectList.map((task, id) => (
+            {projectList.map((project, id) => (
                 <React.Fragment key={id}>
                     {/* Bouton de la carte */}
                     <Button
@@ -93,7 +93,7 @@ export default function PortofolioPage() {
                         height: { xs: '15%' },
                         }}
                     >
-                    <CardComponent task={task} page={page}/>
+                    <CardComponent project={project} page={page}/>
                     </Button>
                     </React.Fragment>
         ))}

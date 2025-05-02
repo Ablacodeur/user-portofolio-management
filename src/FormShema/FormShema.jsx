@@ -9,7 +9,7 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-export default function FormShema({ theTask, onChange, onSubmit }) {
+export default function FormShema({ theProject, onChange, onSubmit }) {
   return (
     <div>
         <form>
@@ -140,7 +140,7 @@ export default function FormShema({ theTask, onChange, onSubmit }) {
                 <FormLabel>Project Name</FormLabel>
                 <Input
                 type="text"
-                value={theTask.project_name || ''}
+                value={theProject.project_name || ''}
                 placeholder="Enter project name"
                 sx={{
                     padding: '10px',
@@ -154,7 +154,7 @@ export default function FormShema({ theTask, onChange, onSubmit }) {
             <FormLabel>Demo URL</FormLabel>
             <Input
             type="text"
-            value={theTask.demo_url || ''}
+            value={theProject.demo_url || ''}
             placeholder="Enter your job title"
             sx={{
                 padding: '10px',
@@ -169,7 +169,7 @@ export default function FormShema({ theTask, onChange, onSubmit }) {
             <Input
             type="text"
             placeholder="Enter your name"
-            value={theTask.repo_url || ''}
+            value={theProject.repo_url || ''}
 
             sx={{
             padding: '10px',
