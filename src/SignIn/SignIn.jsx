@@ -1,10 +1,36 @@
 import { Box, Button, FormControl, Input, Stack, Typography } from '@mui/joy'
-import React from 'react'
+import React, { useState } from 'react'
 import image from '../assets/resources/login-bg.png'
 import s from './style.module.css'
 import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
 export default function SignIn() {
+        const navigate = useNavigate();
+
+        const [login, setLogin] = useState({
+            username: '',
+            password: '',
+        })
+        function handleChange(e){
+            setLogin({
+                ...login,
+                [e.target.name]: e.target.value
+            })
+        }
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            try {
+              const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`, login);
+              console.log('Tâche soumise avec succès :', response.data);
+              navigate("/portofolio"); 
+            } catch (error) {
+              console.error('Erreur lors de la soumission :', error);
+            }
+        };
+
   return (
     <Box>
         <Stack sx={{ width: '100%', height: '90vh', 
@@ -34,8 +60,9 @@ export default function SignIn() {
                 justifyContent:'center',
                 alignItems:'center',
                 textAlign:'center',
-            }}>             
-                <FormControl sx={{ gap:'10px', width:{xs:'80%',sm:'70%',lg:'50%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
+            }}>   
+            <form onSubmit={handleSubmit}>                      
+                <FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
                     <img src={logo} alt="logo" style={{ height:'30px' }} />                    
                     <Typography variant='h1' sx={{ fontSize:'30px',color:'black' }}>Login to account</Typography>
                     <Typography sx={{ color:'#7d7878' }}>Enter your credentials to access your account</Typography>
@@ -49,14 +76,26 @@ export default function SignIn() {
                         <Typography sx={{ margin: '0 10px', color: '#666' }}>or</Typography>
                         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></Box>
                     </Box>
-                    <Input placeholder='Enter email'></Input>
-                    <Input placeholder='Enter a password'></Input>
+                    <Input placeholder='Enter email'
+                    name='username'
+                    onChange={handleChange}
+                    type='email'
+                    ></Input>
+                    <Input placeholder='Enter a password'
+                    name='password'
+                    onChange={handleChange}
+                    type='password'
+                    ></Input>
                     <Button className={s.bt} sx={{ color:'#6466E9',display:'flex',justifyContent:'flex-end',padding:'0px' }} variant='plain' color='neutral'>Forgot password?</Button>
-                    <Button variant='solid' sx={{ backgroundColor:'#6466E9' }}>Sign in</Button>
+                    <Button  variant='solid' sx={{ backgroundColor:'#6466E9' }}
+                    type='submit'>
+                    Sign in
+                    </Button>
                     <Box sx={{ display:'flex', justifyContent:'flex-start'}}>
                     <Typography>Not a menber? <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>Create an account</Button></Typography>
                     </Box>
                 </FormControl>
+             </form>
             </Box>
 
         </Stack>    

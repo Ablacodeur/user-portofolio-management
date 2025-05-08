@@ -1,13 +1,27 @@
 import { Box, Button, FormControl, Input, Stack, Typography } from '@mui/joy'
-import React from 'react'
+import React, { useState } from 'react'
 import image from '../assets/resources/login-bg.png'
 import s from './style.module.css'
 import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-
+import axios from 'axios'
 
 export default function SignUp() {
+    const [login, setLogin] = useState({
+        email: '',
+        password: '',
+    })
+
+    function handleChange(e){
+        setLogin({
+            ...login,
+            [e.target.name]: e.target.value
+        })
+        
+    }
+    console.log(login);
+    
   return (
     <Box>
         <Stack sx={{ width: '100%', height: '90vh', 
@@ -37,8 +51,23 @@ export default function SignUp() {
                 justifyContent:'center',
                 alignItems:'center',
                 textAlign:'center',
-            }}>             
-                <FormControl sx={{ gap:'10px', width:{xs:'80%',sm:'70%',lg:'50%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
+            }}>    
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault(); 
+                try {
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,login);
+                    console.log('Tâche soumise avec succès :', response.data);
+                   
+                  } catch (error) {
+                    console.error('Erreur lors de la soumission :', error);
+                  }
+                }}
+                style={{ width:'60%' }}
+            >
+
+                 <FormControl 
+                 sx={{ gap:'10px', width:{xs:'100%',sm:'100%',lg:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
                     <img src={logo} alt="logo" style={{ height:'30px' }} />                    
                     <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
                     <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'} }}>Enter the fields below to get started</Typography>
@@ -52,8 +81,17 @@ export default function SignUp() {
                         <Typography sx={{ margin: '0 10px', color: '#666' }}>or</Typography>
                         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></Box>
                     </Box>
-                    <Input placeholder='Enter email'></Input>
-                    <Input placeholder='Enter a password'></Input>
+                    <Input 
+                    placeholder='Enter email'
+                    onChange={handleChange}
+                    type='email'
+                    name='email'
+                    ></Input>
+                    <Input placeholder='Enter a password'
+                           onChange={handleChange}
+                           type='password'
+                           name='password'
+                    ></Input>
                     <Box sx={{ 
                             display: 'grid',
                             gridTemplateColumns: 'repeat(2, 1fr)', 
@@ -82,11 +120,16 @@ export default function SignUp() {
                         </Box>  
 
                     </Box>
-                    <Button variant='solid' sx={{ backgroundColor:'#6466E9' }}>Create account</Button>
+                    <Button variant='solid' sx={{ backgroundColor:'#6466E9' }}
+                    type='submit'
+                    >
+                        Create account
+                    </Button>
                     <Box sx={{ display:'flex', justifyContent:'flex-start'}}>
                     <Typography>Already have an account? <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>Log in</Button></Typography>
                     </Box>
                 </FormControl>
+                </form>
             </Box>
 
         </Stack>    
