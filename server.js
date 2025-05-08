@@ -17,10 +17,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  // cookie: {
-  //   secure: process.env.NODE_ENV === 'production', // Utiliser true en production
-  //   maxAge: 1000 * 60 * 60 * 24 // Durée de vie du cookie (1 jour)
-  // }
+  cookie: {  
+      maxAge: 1000 * 60 * 60 * 24 // Durée de vie du cookie (1 jour)
+  }
 }));
 
 app.use(passport.initialize());
