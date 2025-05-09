@@ -6,8 +6,10 @@ import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
+    const navigate = useNavigate();
     const [login, setLogin] = useState({
         email: '',
         password: '',
@@ -58,7 +60,7 @@ export default function SignUp() {
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,login);
                     console.log('Tâche soumise avec succès :', response.data);
-                   
+                    navigate("/signin");
                   } catch (error) {
                     console.error('Erreur lors de la soumission :', error);
                   }

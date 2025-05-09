@@ -72,27 +72,44 @@ const pool = new Pool({
 
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    const checkResult = await pool.query("SELECT * FROM connection WHERE email=$1 ",
-      [email]);
-      if(checkResult>0){
-        res.send('Email already exist.  Try logging in')
-      }else{
-        // Hash the password
-        bcrypt.hash(password, saltRounds, async (err, hash) => {
-          const result = await pool.query(
-          "INSERT INTO connection (email, password) VALUES($1, $2)",
-          [email,hash]);
-          console.log("creation reussie");
-        });
+    // Vérifier si l'utilisateur existe déjà
+    const checkResult = await pool.query("SELECT * FROM connection WHERE email=$1", [email]);
+    if (checkResult.rows.length > 0) {
+      return res.status(400).json({ message: "Email already exists. Try logging in." });
+    }
+
+    // Hacher le mot de passe
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+      if (err) {
+        console.error("Erreur lors du hachage du mot de passe :", err);
+        return res.status(500).json({ message: "Erreur serveur lors du hachage du mot de passe." });
       }
 
-  } catch (error) {
-    console.log(error);
-    
-  }
-});
+      // Insérer l'utilisateur dans la base de données
+      const result = await pool.query(
+        "INSERT INTO connection (email, password) VALUES($1, $2) RETURNING *",
+        [email, hash]
+      );
+      const user = result.rows[0];
 
+      // Connecter l'utilisateur
+      req.login(user, (err) => {
+        if (err) {
+          console.error("Erreur lors de la connexion de l'utilisateur :", err);
+          return res.status(500).json({ message: "Erreur serveur lors de la connexion de l'utilisateur." });
+        }
+
+        console.log("Création réussie et utilisateur connecté");
+        return res.status(201).json({ message: "User registered and logged in successfully", user });
+      });
+      });
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement :", error);
+        return res.status(500).json({ message: "Erreur serveur." });
+      }
+  });
 // ✅ Routes for the logging
 app.post("/signin", (req, res, next) => {
   passport.authenticate("local", (err, user) => {
