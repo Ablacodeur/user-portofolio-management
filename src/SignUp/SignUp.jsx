@@ -53,7 +53,19 @@ export default function SignUp() {
                 justifyContent:'center',
                 alignItems:'center',
                 textAlign:'center',
-            }}>    
+                flexDirection:'column'
+            }}>  
+            <Box sx={{  gap:'30px' }}>
+            <img src={logo} alt="logo" style={{ height:'30px' }} />                    
+                    <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
+                    <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'},marginTop:'20px' }}>Enter the fields below to get started</Typography>
+                    <a href="http://localhost:5000/auth/github" style={{ textDecoration: 'none' }}>
+            <Button sx={{ backgroundColor: '#20293A', marginTop: '20px' }}>
+                <img src={githubIcon} alt="github" style={{ height: '20px', marginRight: '10px' }} />
+                <Typography sx={{ color: 'white', fontSize: 'small' }}>Sign in with Github</Typography>
+            </Button>
+            </a>           
+            </Box>  
             <form
               onSubmit={async (e) => {
                 e.preventDefault(); 
@@ -70,13 +82,6 @@ export default function SignUp() {
 
                  <FormControl 
                  sx={{ gap:'10px', width:{xs:'100%',sm:'100%',lg:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
-                    <img src={logo} alt="logo" style={{ height:'30px' }} />                    
-                    <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
-                    <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'} }}>Enter the fields below to get started</Typography>
-                    <Button sx={{ backgroundColor:'#20293A' }}>
-                        <img src={githubIcon} alt="github" style={{ height:'20px', marginRight:'10px' }} />
-                        <Typography sx={{ color:'white',fontSize:'small' }}>Sign in with Github</Typography>
-                    </Button>
                    {/* Ligne  */}
                     <Box sx={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
                         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></Box>

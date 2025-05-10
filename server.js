@@ -8,6 +8,8 @@ import bcrypt from 'bcrypt';
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
+import GitHubStrategy from "passport-github2";
+import fetch from "node-fetch";
 
 
 const app = express();
@@ -34,15 +36,33 @@ app.get("/portofolio", (req, res) => {
     res.status(401).send("Vous n'êtes pas connecté");
   }
 });
+// Route pour rediriger vers GitHub
+app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
 
+// Route de callback après l'authentification GitHub
+app.get(
+  "/auth/github/callback",
+  passport.authenticate("github", { failureRedirect: "/signin" }),
+  (req, res) => {
+    // Redirige vers le portfolio après une connexion réussie
+    res.redirect("http://localhost:5173/portofolio");
+  }
+);
 
-
-
-
-// CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
+//Recuprerer les emails privés sur github
+async function getEmails(accessToken) {
+  const response = await fetch("https://api.github.com/user/emails", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const emails = await response.json();
+  return emails.find(email => email.primary && email.verified)?.email || null;
+}// CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 const allowedOrigins = [
   'https://project-list-inky.vercel.app',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'http://localhost:5000'
 ];
 
 const corsOptions = {
@@ -191,7 +211,7 @@ app.post("/projects", async (req, res) => {
 //   }
 // });
 
-//copie des  elements du signing ou login dans la strategie
+//copie des  elements du signing ou login dans la strategie AKA local strategy
 passport.use(new Strategy( async function verify(username,  password, cb){
   console.log("username", username);  
   
@@ -228,6 +248,50 @@ passport.use(new Strategy( async function verify(username,  password, cb){
 
 }))
 
+
+// Configurer la stratégie GitHub
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: "http://localhost:5000/auth/github/callback", 
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        console.log("Profil GitHub :", profile);
+    
+        // Récupérer l'e-mail principal si `profile.emails` est vide avec le accestoken
+        let email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+        if (!email) {
+          email = await getEmails(accessToken);
+        }
+    
+        if (!email) {
+          console.error("Aucune adresse e-mail trouvée pour cet utilisateur GitHub.");
+          return cb(new Error("Aucune adresse e-mail disponible"), null);
+        }
+    
+        // Vérifiez si l'utilisateur existe déjà dans la base de données
+        const result = await pool.query("SELECT * FROM connection WHERE email=$1", [email]);
+    
+        if (result.rows.length > 0) {
+          // L'utilisateur existe déjà
+          return cb(null, result.rows[0]);
+        } else {
+          // Insérez un nouvel utilisateur dans la base de données
+          const newUser = await pool.query(
+            "INSERT INTO connection (email, password) VALUES ($1, $2) RETURNING *",
+            [email, null] // Pas de mot de passe pour les utilisateurs GitHub
+          );
+          return cb(null, newUser.rows[0]);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'authentification GitHub :", error);
+        return cb(error, null);
+      }
+    }  )
+);
 passport.serializeUser((user, cb)=> {
   cb(null, user);
 });
