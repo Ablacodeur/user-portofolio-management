@@ -20,7 +20,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {  
-      maxAge: 1000 * 60 * 60 * 24 // Durée de vie du cookie (1 jour)
+      maxAge: 1000 * 60 * 60 * 24 ,// Durée de vie du cookie (1 jour)
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production"
   }
 }));
 
@@ -73,6 +75,7 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  credentials: true,
   methods: 'GET,POST,DELETE',
 };
 app.use(cors(corsOptions));
@@ -299,7 +302,23 @@ passport.serializeUser((user, cb)=> {
 passport.deserializeUser((user, cb)=> {
   cb(null, user);
 });
-
+//Logout 
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error("Erreur lors de la déconnexion :", err);
+      return res.status(500).json({ message: "Erreur lors de la déconnexion" });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Erreur lors de la destruction de la session :", err);
+        return res.status(500).json({ message: "Erreur lors de la destruction de la session" });
+      }
+      res.clearCookie("connect.sid"); // Supprime le cookie de session
+      return res.status(200).json({ message: "Déconnexion réussie" });
+    });
+  });
+});
 
 // Lancer le serveur
 const PORT = process.env.PORT || 5000;

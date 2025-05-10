@@ -5,9 +5,12 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined';
 import AirplayOutlinedIcon from '@mui/icons-material/AirplayOutlined';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function ResponsiveAppBar() {
     const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleOpenChange = React.useCallback(
         (event, isOpen) => {
@@ -15,6 +18,18 @@ export default function ResponsiveAppBar() {
         },
         [],
     );
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
+        withCredentials: true, // Inclure les cookies pour la session
+      });
+      console.log(response.data.message); // Affiche "Déconnexion réussie"
+      navigate("/signin"); // Redirige vers la page de connexion
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
+  };
   return (   
     <Box>
 
@@ -72,11 +87,20 @@ export default function ResponsiveAppBar() {
                         <MenuItem>
                         <Typography variant='h6'sx={{ fontSize:'small'}}>Account</Typography>
                         </MenuItem>
-                        <MenuItem> <AccountCircleOutlinedIcon /> Profile settings</MenuItem>
-                        <MenuItem> <PhotoLibraryOutlinedIcon /> Project settings</MenuItem>
-                        <MenuItem><AirplayOutlinedIcon /> My  Portofolio</MenuItem>
+                        <MenuItem> <AccountCircleOutlinedIcon />
+                        <Link to={"/profile"} style={{ color:'black', textDecoration:'none' }}></Link>
+                         Profile settings
+                         </MenuItem>
+                        <MenuItem > <PhotoLibraryOutlinedIcon /> 
+                        <Link to={"/projectsetting"} style={{ color:'black', textDecoration:'none' }} > Project settings</Link>
+                       </MenuItem>
+                        <MenuItem><AirplayOutlinedIcon />
+                            <Link to={"/portofolio"} style={{ color:'black', textDecoration:'none' }} >     
+                                My  Portofolio
+                            </Link>
+                         </MenuItem>
                         <Box sx={{ width: '100%', borderTop: '1px solid #ccc', margin: '10px 0' }} />
-                        <MenuItem  sx={{ color:'red' }} ><ExitToAppOutlinedIcon /> Logout</MenuItem>
+                        <MenuItem  sx={{ color:'red' }}  onClick={handleLogout} ><ExitToAppOutlinedIcon /> Logout</MenuItem>
 
                     </Menu>
             </Dropdown>

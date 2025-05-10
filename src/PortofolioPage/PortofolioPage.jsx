@@ -7,11 +7,13 @@ import CardComponent from '../Card/CardComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setprojectList } from '../store/user-project/project-slice';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function PortofolioPage() {
         const projectList = useSelector((store) => store.PROJECT.projectList);
         const dispatch = useDispatch();
         const[page, setPage] = useState('portofolio');
+        const navigate = useNavigate();
     
         useEffect(() => {
               const fetchData = async () => {
@@ -41,6 +43,7 @@ export default function PortofolioPage() {
           }}
         >
         </Box>
+        <Link to={"/profile"}>
         <Box sx={{ marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
                 marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
                 marginTop: {xs:'-60px', md:'-100px'},
@@ -57,6 +60,8 @@ export default function PortofolioPage() {
          }}>
 
         </Box>
+
+        </Link>
         <Box sx={{ marginTop: '100px',marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
          marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' }, 
          gap: '20px',display: 'flex', 

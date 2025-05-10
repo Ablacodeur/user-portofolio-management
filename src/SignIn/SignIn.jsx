@@ -5,7 +5,7 @@ import s from './style.module.css'
 import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function SignIn() {
         const navigate = useNavigate();
@@ -60,16 +60,33 @@ export default function SignIn() {
                 justifyContent:'center',
                 alignItems:'center',
                 textAlign:'center',
+                flexDirection:'column'
             }}>   
-            <form onSubmit={handleSubmit}>                      
-                <FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
-                    <img src={logo} alt="logo" style={{ height:'30px' }} />                    
-                    <Typography variant='h1' sx={{ fontSize:'30px',color:'black' }}>Login to account</Typography>
-                    <Typography sx={{ color:'#7d7878' }}>Enter your credentials to access your account</Typography>
-                    <Button sx={{ backgroundColor:'#20293A' }}>
-                        <img src={githubIcon} alt="github" style={{ height:'20px', marginRight:'10px' }} />
-                        <Typography sx={{ color:'white',fontSize:'small' }}>Sign in with Github</Typography>
+            <Box sx={{  gap:'30px' }}>
+            <img src={logo} alt="logo" style={{ height:'30px' }} />                    
+                    <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
+                    <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'},marginTop:'20px' }}>Enter the fields below to get started</Typography>
+                    <a href="http://localhost:5000/auth/github" style={{ textDecoration: 'none' }}>
+                    <Button sx={{ backgroundColor: '#20293A', marginTop: '20px' }}>
+                        <img src={githubIcon} alt="github" style={{ height: '20px', marginRight: '10px' }} />
+                        <Typography sx={{ color: 'white', fontSize: 'small' }}>Sign in with Github</Typography>
                     </Button>
+                    </a>           
+            </Box>  
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault(); 
+                try {
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,login);
+                    console.log('Tâche soumise avec succès :', response.data);
+                    navigate("/signin");
+                  } catch (error) {
+                    console.error('Erreur lors de la soumission :', error);
+                  }
+                }}
+                style={{ width:'60%' }}
+            >
+                <FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
                    {/* Ligne  */}
                     <Box sx={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
                         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></Box>
@@ -92,7 +109,11 @@ export default function SignIn() {
                     Sign in
                     </Button>
                     <Box sx={{ display:'flex', justifyContent:'flex-start'}}>
-                    <Typography>Not a menber? <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>Create an account</Button></Typography>
+                    <Typography>Not a menber? 
+                    <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>
+                        <Link to={"/signup"}>Create an account</Link>
+                    </Button>
+                    </Typography>
                     </Box>
                 </FormControl>
              </form>

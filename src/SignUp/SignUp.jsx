@@ -6,7 +6,7 @@ import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -133,7 +133,11 @@ export default function SignUp() {
                         Create account
                     </Button>
                     <Box sx={{ display:'flex', justifyContent:'flex-start'}}>
-                    <Typography>Already have an account? <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>Log in</Button></Typography>
+                    <Typography>Already have an account? 
+                        <Button variant='plain' className={s.bt} sx={{ color:'#6466E9',padding:'0px' }}>
+                            <Link to={"/signin"}>Log in</Link>
+                        </Button>
+                    </Typography>
                     </Box>
                 </FormControl>
                 </form>
