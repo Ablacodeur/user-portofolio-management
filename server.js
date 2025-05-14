@@ -20,14 +20,13 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {  
-      maxAge: 1000 * 60 * 60 * 24 ,// Durée de vie du cookie (1 jour)
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production"
+      maxAge: 1000 * 60 * 60 * 24 // Durée de vie du cookie (1 jour)
   }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
 
 app.get("/portofolio", (req, res) => {
   console.log(req.user);
@@ -46,11 +45,10 @@ app.get(
   "/auth/github/callback",
   passport.authenticate("github", { failureRedirect: "/signin" }),
   (req, res) => {
-    // Redirige vers le portfolio après une connexion réussie
+    console.log("Utilisateur authentifié via GitHub :", req.user);
     res.redirect("http://localhost:5173/portofolio");
   }
 );
-
 //Recuprerer les emails privés sur github
 async function getEmails(accessToken) {
   const response = await fetch("https://api.github.com/user/emails", {
@@ -75,7 +73,6 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,
   methods: 'GET,POST,DELETE',
 };
 app.use(cors(corsOptions));
@@ -135,6 +132,7 @@ app.post("/register", async (req, res) => {
   });
 // ✅ Routes for the logging
 app.post("/signin", (req, res, next) => {
+  console.log("Requête reçue pour /signin :", req.body);
   passport.authenticate("local", (err, user) => {
     if (err) {
       console.error("Erreur lors de l'authentification :", err);

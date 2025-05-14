@@ -6,9 +6,12 @@ import logo from './../assets/resources/logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from "react-redux";
+import { setUser } from '../store/user-project/userSlice'
 
 export default function SignIn() {
         const navigate = useNavigate();
+        const dispatch = useDispatch();
 
         const [login, setLogin] = useState({
             username: '',
@@ -20,16 +23,6 @@ export default function SignIn() {
                 [e.target.name]: e.target.value
             })
         }
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            try {
-              const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`, login);
-              console.log('Tâche soumise avec succès :', response.data);
-              navigate("/portofolio"); 
-            } catch (error) {
-              console.error('Erreur lors de la soumission :', error);
-            }
-        };
 
   return (
     <Box>
@@ -77,11 +70,12 @@ export default function SignIn() {
               onSubmit={async (e) => {
                 e.preventDefault(); 
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,login);
-                    console.log('Tâche soumise avec succès :', response.data);
-                    navigate("/signin");
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`,login);
+                    console.log('Connecte avec succès :', response.data);
+                    dispatch(setUser(response.data));
+                    navigate("/portofolio");
                   } catch (error) {
-                    console.error('Erreur lors de la soumission :', error);
+                    console.error('Erreur lors de la cconnection :', error);
                   }
                 }}
                 style={{ width:'60%' }}

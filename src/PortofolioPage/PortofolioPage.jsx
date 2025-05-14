@@ -11,6 +11,9 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function PortofolioPage() {
         const projectList = useSelector((store) => store.PROJECT.projectList);
+        const user = useSelector((state) => state.user.user.user);
+        console.log(user.email);
+        
         const dispatch = useDispatch();
         const[page, setPage] = useState('portofolio');
         const navigate = useNavigate();
@@ -66,8 +69,11 @@ export default function PortofolioPage() {
          marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' }, 
          gap: '20px',display: 'flex', 
          flexDirection: 'column', alignItems: 'flex-start' }}>
+         <h5> Bienvenue, {user?.email}</h5>
+         <p>Ceci est votre portfolio personnalisé.</p>
             <h1 style={{ fontSize: '40px',padding:'0px' }}>Trace Adkins
             <br/>
+            
             <span style={{ fontSize: '20px', color: '#989494'}}>Rock singer</span>
             </h1>
             <Button variant="outlined" sx={{ 

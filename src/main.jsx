@@ -13,6 +13,8 @@ import ProjectSetting from './ProjectSetting/ProjectSetting.jsx'
 import PortofolioPage from './PortofolioPage/PortofolioPage.jsx'
 import './style.css';
 import Browser from './Browser/Browser.jsx'
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,9 +27,31 @@ createRoot(document.getElementById('root')).render(
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgetpass" element={<ForgetPass />} />
           <Route path="/resetpass" element={<ResetPass />} />
-          <Route path="/profile" element={<ProfileSetting/>} />
-          <Route path="/projectsetting" element={<ProjectSetting />} />
-          <Route path="/portofolio" element={<PortofolioPage />} />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfileSetting />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="projectsetting"
+            element={
+              <ProtectedRoute>
+                <ProjectSetting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/portofolio"
+            element={
+              <ProtectedRoute>
+                <PortofolioPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
