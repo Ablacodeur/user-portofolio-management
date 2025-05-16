@@ -8,12 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setprojectList } from '../store/user-project/project-slice';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { setError, setUser } from '../store/user-project/userSlice';
 
 export default function PortofolioPage() {
         const projectList = useSelector((store) => store.PROJECT.projectList);
-        const user = useSelector((state) => state.user.user.user);
-        console.log(user.email);
-        
+        const user = useSelector((state) => state.USER?.user);
+        console.log(user?.email); 
         const dispatch = useDispatch();
         const[page, setPage] = useState('portofolio');
         const navigate = useNavigate();
@@ -30,6 +30,24 @@ export default function PortofolioPage() {
           
               fetchData();
             }, []);
+            useEffect(() => {
+              const fetchUser = async () => {
+                try {
+                  const response = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
+                    withCredentials: true, // Inclure les cookies de session
+                  });
+                  console.log("Utilisateur récupéré après GitHub :", response.data);
+                  dispatch(setUser(response.data)); // Met à jour le store Redux
+                } catch (error) {
+                  console.error("Erreur lors de la récupération de l'utilisateur :", error);
+                  dispatch(setError("Non authentifié"));
+                }
+              };
+          
+              fetchUser();
+            }, []);
+          
+    
         
     return (
       <Box sx={{ position:'relative' }}>

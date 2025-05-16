@@ -8,23 +8,7 @@ import { setError, setUser } from './store/user-project/userSlice'
 import axios from 'axios'
 export default function App() {
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
-          withCredentials: true, // Inclure les cookies de session
-        });
-        dispatch(setUser(response.data)); // Stocker l'utilisateur dans Redux
-      } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
-        dispatch(setError("Non authentifié"));
-      }
-    };
-
-    fetchUser();
-  }, [dispatch]);
+  
   return (
     <Box sx={{ height: '90vh',}}>
     

@@ -29,28 +29,21 @@ createRoot(document.getElementById('root')).render(
           <Route path="/resetpass" element={<ResetPass />} />
           <Route
             path="profile"
-            element={
-              <ProtectedRoute>
+            element=
                 <ProfileSetting />
-              </ProtectedRoute>
-            }
           />
 
           <Route
             path="projectsetting"
-            element={
-              <ProtectedRoute>
+            element=
                 <ProjectSetting />
-              </ProtectedRoute>
-            }
+             
           />
           <Route
             path="/portofolio"
-            element={
-              <ProtectedRoute>
+            element=
                 <PortofolioPage />
-              </ProtectedRoute>
-            }
+             
           />
         </Route>
       </Routes>

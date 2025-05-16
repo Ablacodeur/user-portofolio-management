@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, Input, Stack, Typography } from '@mui/joy'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import image from '../assets/resources/login-bg.png'
 import s from './style.module.css'
 import logo from './../assets/resources/logo.svg'
@@ -23,6 +23,8 @@ export default function SignIn() {
                 [e.target.name]: e.target.value
             })
         }
+
+      
 
   return (
     <Box>
@@ -71,8 +73,8 @@ export default function SignIn() {
                 e.preventDefault(); 
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`,login);
-                    console.log('Connecte avec succès :', response.data);
-                    dispatch(setUser(response.data));
+                    console.log('Connecte avec succès :', response.data.user);
+                    dispatch(setUser(response.data.user));
                     navigate("/portofolio");
                   } catch (error) {
                     console.error('Erreur lors de la cconnection :', error);

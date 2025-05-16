@@ -14,14 +14,42 @@ import fetch from "node-fetch";
 
 const app = express();
 const saltRounds = 10;
+// CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
+
+
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://project-list-inky.vercel.app'], // Frontend local et déployé
+  credentials: true, // Autoriser les cookies et les sessions
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
+  allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+};
+
+app.use(cors(corsOptions));
+
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: 'GET,POST,DELETE',
+//   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+
+// };
+// app.use(cors(corsOptions));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: {  
-      maxAge: 1000 * 60 * 60 * 24 // Durée de vie du cookie (1 jour)
-  }
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 jour
+    httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
+    secure: false, // Utiliser HTTPS en production
+  },
 }));
 
 app.use(passport.initialize());
@@ -46,37 +74,26 @@ app.get(
   passport.authenticate("github", { failureRedirect: "/signin" }),
   (req, res) => {
     console.log("Utilisateur authentifié via GitHub :", req.user);
-    res.redirect("http://localhost:5173/portofolio");
+
+    // Sauvegarder explicitement la session avant de rediriger
+    req.session.save((err) => {
+      if (err) {
+        console.error("Erreur lors de la sauvegarde de la session :", err);
+        return res.status(500).send("Erreur serveur");
+      }
+      res.redirect("http://localhost:5173/portofolio");
+    });
   }
 );
-//Recuprerer les emails privés sur github
-async function getEmails(accessToken) {
-  const response = await fetch("https://api.github.com/user/emails", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  const emails = await response.json();
-  return emails.find(email => email.primary && email.verified)?.email || null;
-}// CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
-const allowedOrigins = [
-  'https://project-list-inky.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:5000'
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: 'GET,POST,DELETE',
-};
-app.use(cors(corsOptions));
-app.use(express.json());
+app.get("/me", (req, res) => {
+  console.log("Requête reçue pour /me :", req.user);
+  console.log("Session actuelle :", req.session);
+  if (req.isAuthenticated()) {
+    return res.status(200).json(req.user);
+  } else {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
+});
 
 // Connexion PostgreSQL
 const pool = new Pool({
@@ -249,33 +266,36 @@ passport.use(new Strategy( async function verify(username,  password, cb){
 
 }))
 
-
 // Configurer la stratégie GitHub
 passport.use(
   new GitHubStrategy(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/auth/github/callback", 
+      callbackURL: "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        console.log("Profil GitHub :", profile);
-    
-        // Récupérer l'e-mail principal si `profile.emails` est vide avec le accestoken
+        // Récupérer l'email principal si `profile.emails` est vide
         let email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
         if (!email) {
-          email = await getEmails(accessToken);
+          const emailResponse = await fetch("https://api.github.com/user/emails", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          const emails = await emailResponse.json();
+          email = emails.find((e) => e.primary && e.verified)?.email || null;
         }
-    
+
         if (!email) {
           console.error("Aucune adresse e-mail trouvée pour cet utilisateur GitHub.");
           return cb(new Error("Aucune adresse e-mail disponible"), null);
         }
-    
+
         // Vérifiez si l'utilisateur existe déjà dans la base de données
         const result = await pool.query("SELECT * FROM connection WHERE email=$1", [email]);
-    
+
         if (result.rows.length > 0) {
           // L'utilisateur existe déjà
           return cb(null, result.rows[0]);
@@ -291,14 +311,35 @@ passport.use(
         console.error("Erreur lors de l'authentification GitHub :", error);
         return cb(error, null);
       }
-    }  )
+    }
+  )
 );
-passport.serializeUser((user, cb)=> {
-  cb(null, user);
-});
+// passport.serializeUser((user, cb)=> {
+//   cb(null, user);
+// });
 
-passport.deserializeUser((user, cb)=> {
-  cb(null, user);
+// passport.deserializeUser((user, cb)=> {
+//   cb(null, user);
+// });
+passport.serializeUser((user, cb) => {
+  console.log("Sérialisation de l'utilisateur :", user);
+  cb(null, user.id); // Stocke uniquement l'ID utilisateur dans la session
+});
+passport.deserializeUser(async (id, cb) => {
+  console.log("Désérialisation de l'utilisateur avec l'ID :", id);
+  try {
+    const result = await pool.query("SELECT * FROM connection WHERE id=$1", [id]);
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      console.log("Utilisateur trouvé :", user);
+      cb(null, user); // Passe l'utilisateur désérialisé à Passport
+    } else {
+      cb(new Error("Utilisateur non trouvé"), null);
+    }
+  } catch (error) {
+    console.error("Erreur lors de la désérialisation :", error);
+    cb(error, null);
+  }
 });
 //Logout 
 app.get("/logout", (req, res) => {
