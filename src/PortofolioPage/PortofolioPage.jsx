@@ -32,6 +32,11 @@ export default function PortofolioPage() {
             }, []);
             useEffect(() => {
               const fetchUser = async () => {
+                if (user && user.password) {
+                  console.log("Utilisateur déjà défini :", user);
+                  return; // Ne pas remplacer l'utilisateur existant
+                }
+            
                 try {
                   const response = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
                     withCredentials: true, // Inclure les cookies de session
@@ -43,11 +48,9 @@ export default function PortofolioPage() {
                   dispatch(setError("Non authentifié"));
                 }
               };
-          
+            
               fetchUser();
-            }, []);
-          
-    
+            }, [dispatch, user]);    
         
     return (
       <Box sx={{ position:'relative' }}>
