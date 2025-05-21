@@ -41,19 +41,6 @@ export default function ModalCard({ setGlobalAlert }) {
       }
     }
   
-    function setChange(e) {
-      const { name, value } = e.target;
-  
-      dispatch(
-        setTheProject({
-          ...theProject,
-          [name]: value,
-        })
-      );
-  
-      console.log(`Updated ${name}:`, value);
-    }
-  
     async function handleDelete(projectId) {
       if (window.confirm('Do you really want to delete the project?')) {
         try {
@@ -186,10 +173,6 @@ export default function ModalCard({ setGlobalAlert }) {
   
               {/* Formulaire */}
               <FormShema 
-                      theProject={theProject}
-                      onChange={(e) =>
-                        setTheProject({ ...theProject, [e.target.name]: e.target.value })
-                      }                   
               />
 
             </Box>
@@ -265,10 +248,6 @@ export default function ModalCard({ setGlobalAlert }) {
 
                     {/* Formulaire */}
                     <FormShema 
-                      theProject={theProject}
-                      onChange={(e) =>
-                        setTheProject({ ...theProject, [e.target.name]: e.target.value })
-                      }
                     />
                   </Box>
                 )}

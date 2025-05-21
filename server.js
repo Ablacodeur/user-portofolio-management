@@ -26,20 +26,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   methods: 'GET,POST,DELETE',
-//   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
-
-// };
-// app.use(cors(corsOptions));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -180,38 +166,40 @@ app.get("/projects", async (req, res) => {
     res.status(500).send("Erreur serveur lors de la récupération des tâches");
   }
 });
-
 app.post("/projects", async (req, res) => {
-  const { id, name, description, status, icon, statusicon } = req.body;
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: "Non authentifié" });
+  }
 
-  if (!name || !description) {
+  const { project_name, demo_url, repo_url, description } = req.body;
+  const userId = req.user.id; // Récupérer l'ID de l'utilisateur connecté
+  console.log("ID de l'utilisateur connecté :", userId);
+
+  if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
 
   try {
-    const existingTask = await pool.query("SELECT * FROM project WHERE id = $1", [id]);
+    // Vérifiez si un projet avec le même nom existe déjà
+    const existingName = await pool.query("SELECT * FROM project WHERE project_name = $1", [project_name]);
+    const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
-    if (existingTask.rows.length > 0) {
-      const updatedTask = await pool.query(
-        `UPDATE project 
-         SET name = $1, description = $2, status = $3, icon = $4, statusicon = $5
-         WHERE id = $6
-         RETURNING *`,
-        [name, description, status, icon, statusicon, id]
-      );
-      return res.status(200).json(updatedTask.rows[0]);
-    } else {
-      const newTask = await pool.query(
-        `INSERT INTO project (name, description, status, icon, statusicon) 
-         VALUES ($1, $2, $3, $4, $5) 
-         RETURNING *`,
-        [name, description, status, icon, statusicon]
-      );
-      return res.status(201).json(newTask.rows[0]);
+    if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
+      return res.status(400).json({ error: "Un projet avec ce nom et repo existe déjà." });
     }
+
+    // Insérer un nouveau projet
+    const newProject = await pool.query(
+      `INSERT INTO project (project_name, demo_url, repo_url, description, user_id) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING *`,
+      [project_name, demo_url, repo_url, description, userId]
+    );
+
+    return res.status(201).json(newProject.rows[0]);
   } catch (error) {
     console.error("Erreur SQL :", error);
-    res.status(500).send("Erreur lors de l'ajout ou de la mise à jour de la tâche.");
+    res.status(500).send("Erreur lors de l'ajout du projet.");
   }
 });
 

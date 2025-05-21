@@ -9,11 +9,59 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-export default function FormShema({ theProject, onChange, onSubmit }) {
+import { useDispatch, useSelector } from 'react-redux';
+import { setprojectList, setTheProject } from '../store/user-project/project-slice';
+import axios from 'axios';
+export default function FormShema({ onSubmit }) {
+
+    const dispatch = useDispatch();
+    const projectList = useSelector((store) => store.PROJECT.projectList);
+    const theProject = useSelector((store) => store.PROJECT.theProject);
+    function setChange(e) {
+        const { name, value } = e.target;
+        dispatch(
+          setTheProject({
+            [name]: value,
+          })
+        );
+    
+        console.log(`Updated:`, value);
+      }
+      function handleClick(project) {
+        setOpen(true);
+        if (project) {
+          setTheProject(project);
+        }
+      }
+  
+  
   return (
     <div>
-        <form>
+            <form
+            onSubmit={async (e) => {
+                e.preventDefault(); // Empêche le rafraîchissement de la page
+                try {
+                const response = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/projects`,
+                    theProject, // Données du projet
+                    {
+                    withCredentials: true, // Inclure les cookies pour la session
+                    }
+                );
+                console.log("Tâche soumise avec succès :", response.data);
 
+                // Mettre à jour la liste des projets dans le store Redux
+                dispatch(setprojectList([...projectList, response.data]));
+
+                // Autres actions (si nécessaires)
+                // setReload(true);
+                // setOpen(false);
+                // setGlobalAlert('add');
+                } catch (error) {
+                console.error("Erreur lors de la soumission :", error);
+                }
+            }}
+            >
             <FormControl
             sx={{
                 display: 'flex',
@@ -140,8 +188,9 @@ export default function FormShema({ theProject, onChange, onSubmit }) {
                 <FormLabel>Project Name</FormLabel>
                 <Input
                 type="text"
-                value={theProject.project_name || ''}
+                onChange={setChange}
                 placeholder="Enter project name"
+                name='project_name'
                 sx={{
                     padding: '10px',
                     borderRadius: '5px',
@@ -154,8 +203,9 @@ export default function FormShema({ theProject, onChange, onSubmit }) {
             <FormLabel>Demo URL</FormLabel>
             <Input
             type="text"
-            value={theProject.demo_url || ''}
+            onChange={setChange}
             placeholder="Enter your job title"
+            name='demo_url'
             sx={{
                 padding: '10px',
                 borderRadius: '5px',
@@ -169,8 +219,8 @@ export default function FormShema({ theProject, onChange, onSubmit }) {
             <Input
             type="text"
             placeholder="Enter your name"
-            value={theProject.repo_url || ''}
-
+            onChange={setChange}
+            name='repository_url'
             sx={{
             padding: '10px',
             borderRadius: '5px',
@@ -180,6 +230,7 @@ export default function FormShema({ theProject, onChange, onSubmit }) {
             </Box>
             </Box>
             <Textarea 
+            name='description'
             aria-label="minimum height" 
             minRows={5} 
             placeholder="Enter a short intrioduction... "
@@ -202,6 +253,7 @@ export default function FormShema({ theProject, onChange, onSubmit }) {
 >
             <Button
             variant="contained"
+            type='submit'
             sx={{
                 display: 'flex',
                 width: '100px',
