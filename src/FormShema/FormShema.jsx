@@ -17,6 +17,10 @@ export default function FormShema({ onSubmit }) {
     const dispatch = useDispatch();
     const projectList = useSelector((store) => store.PROJECT.projectList);
     const theProject = useSelector((store) => store.PROJECT.theProject);
+            const user = useSelector((state) => state.USER?.user);
+            console.log(user?.id); 
+    
+
     function setChange(e) {
         const { name, value } = e.target;
         dispatch(
@@ -41,9 +45,13 @@ export default function FormShema({ onSubmit }) {
             onSubmit={async (e) => {
                 e.preventDefault(); // Empêche le rafraîchissement de la page
                 try {
+                const projectWithUserId = {
+                    ...theProject,
+                    user_id: user?.id, // Inclure l'ID utilisateur
+                };
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/projects`,
-                    theProject, // Données du projet
+                    projectWithUserId, // Données du projet
                     {
                     withCredentials: true, // Inclure les cookies pour la session
                     }
@@ -120,6 +128,8 @@ export default function FormShema({ onSubmit }) {
             alignItems:'center',}}>
             <Box >
             <Input
+            name='project_image'
+            onChange={setChange}
             type="file"
             accept="image/*"
             id="file-upload"
@@ -220,7 +230,7 @@ export default function FormShema({ onSubmit }) {
             type="text"
             placeholder="Enter your name"
             onChange={setChange}
-            name='repository_url'
+            name='repo_url'
             sx={{
             padding: '10px',
             borderRadius: '5px',
@@ -234,6 +244,7 @@ export default function FormShema({ onSubmit }) {
             aria-label="minimum height" 
             minRows={5} 
             placeholder="Enter a short intrioduction... "
+            onChange={setChange}
             sx={{
             width: '100%',
             padding: '10px',

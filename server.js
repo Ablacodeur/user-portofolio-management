@@ -95,6 +95,14 @@ const pool = new Pool({
 
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
+  console.log("Utilisateur connecté :", req.user);
+
+  if (!req.user) {
+    return res.status(401).json({ error: "Non authentifié" });
+  }
+
+  const userId = req.user.id;
+  console.log("ID de l'utilisateur connecté :", userId)
 
   try {
     // Vérifier si l'utilisateur existe déjà
@@ -166,15 +174,11 @@ app.get("/projects", async (req, res) => {
     res.status(500).send("Erreur serveur lors de la récupération des tâches");
   }
 });
+
 app.post("/projects", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ error: "Non authentifié" });
-  }
-
-  const { project_name, demo_url, repo_url, description } = req.body;
-  const userId = req.user.id; // Récupérer l'ID de l'utilisateur connecté
-  console.log("ID de l'utilisateur connecté :", userId);
-
+  const { project_name, demo_url, repo_url, description, user_id,project_image } = req.body;
+  console.log("ID de l'utilisateur connecté :", user_id);
+  
   if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
@@ -185,24 +189,23 @@ app.post("/projects", async (req, res) => {
     const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
     if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
-      return res.status(400).json({ error: "Un projet avec ce nom et repo existe déjà." });
+      return res.status(400).json({ error: "Un projet avec ce nom  et repo existe déjà." });
     }
 
     // Insérer un nouveau projet
     const newProject = await pool.query(
-      `INSERT INTO project (project_name, demo_url, repo_url, description, user_id) 
-       VALUES ($1, $2, $3, $4, $5) 
+      `INSERT INTO project (project_name, demo_url, repo_url,description,user_Id,project_image) 
+       VALUES ($1, $2, $3, $4, $5, $6 ) 
        RETURNING *`,
-      [project_name, demo_url, repo_url, description, userId]
+      [project_name, demo_url, repo_url,description,user_id,project_image]
     );
-
+    console.log("Nouveau projet ajouté :", newProject.rows[0]);
     return res.status(201).json(newProject.rows[0]);
   } catch (error) {
     console.error("Erreur SQL :", error);
     res.status(500).send("Erreur lors de l'ajout du projet.");
   }
 });
-
 // app.delete("/projects/:id", async (req, res) => {
 //   const { id } = req.params;
 //   try {
