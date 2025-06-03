@@ -17,26 +17,42 @@ export default function FormShema({ onSubmit }) {
     const dispatch = useDispatch();
     const projectList = useSelector((store) => store.PROJECT.projectList);
     const theProject = useSelector((store) => store.PROJECT.theProject);
-            const user = useSelector((state) => state.USER?.user);
-            console.log(user?.id); 
+    const user = useSelector((state) => state.USER?.user);
+    const uniqueId = `file-upload-${Math.random().toString(36).substr(2, 9)}`;
+
     
 
-    function setChange(e) {
-        const { name, value } = e.target;
-        dispatch(
-          setTheProject({
-            [name]: value,
-          })
-        );
-    
-        console.log(`Updated:`, value);
-      }
-      function handleClick(project) {
-        setOpen(true);
-        if (project) {
-          setTheProject(project);
-        }
-      }
+            function setChange(e) {
+                const { name, value, files } = e.target;
+              
+                if (e.target.type === "file") {
+                  
+                  dispatch(
+                    setTheProject({
+                      ...theProject,
+                      [name]: files[0], // Stocke le fichier sélectionné
+                    })
+                  );
+                  console.log("Fichier sélectionné :", theProject.project_image);
+                  console.log(`Fichier sélectionné :`, files[0]);
+                } else {
+                 
+                  dispatch(
+                    setTheProject({
+                      ...theProject,
+                      [name]: value,
+                    })
+                  );
+                  console.log(`Updated: ${name} = ${value}`);
+                }
+              } 
+
+            function handleClick(project) {
+                setOpen(true);
+                if (project) {
+                setTheProject(project);
+                }
+            }
   
   
   return (
@@ -45,31 +61,36 @@ export default function FormShema({ onSubmit }) {
             onSubmit={async (e) => {
                 e.preventDefault(); // Empêche le rafraîchissement de la page
                 try {
-                const projectWithUserId = {
-                    ...theProject,
-                    user_id: user?.id, // Inclure l'ID utilisateur
-                };
+                const formData = new FormData();
+
+                // Ajoutez toutes les propriétés de theProject à formData
+                for (const key in theProject) {
+                    formData.append(key, theProject[key]);
+                }
+
+                // Ajoutez l'ID utilisateur
+                formData.append("user_id", user?.id);
+
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/projects`,
-                    projectWithUserId, // Données du projet
+                    formData, // Envoyez formData
                     {
                     withCredentials: true, // Inclure les cookies pour la session
+                    headers: {
+                        "Content-Type": "multipart/form-data", // Spécifiez le type multipart
+                    },
                     }
                 );
+
                 console.log("Tâche soumise avec succès :", response.data);
 
                 // Mettre à jour la liste des projets dans le store Redux
                 dispatch(setprojectList([...projectList, response.data]));
-
-                // Autres actions (si nécessaires)
-                // setReload(true);
-                // setOpen(false);
-                // setGlobalAlert('add');
                 } catch (error) {
                 console.error("Erreur lors de la soumission :", error);
                 }
             }}
-            >
+            >            
             <FormControl
             sx={{
                 display: 'flex',
@@ -126,39 +147,35 @@ export default function FormShema({ onSubmit }) {
             padding: {xs:'5px', sm:'10px'},
             borderRadius: '10px',
             alignItems:'center',}}>
-            <Box >
-            <Input
-            name='project_image'
-            onChange={setChange}
-            type="file"
-            accept="image/*"
-            id="file-upload"
-            sx={{ display: 'none' }} // Masque l'élément d'entrée
-            />
-            <label htmlFor="file-upload">
-            <Button
-            variant="contained"
-            component="span" // Permet au bouton de fonctionner comme un label
-            sx={{
-            backgroundColor: '#ffffff',
-            color: 'white',
-            padding: '0px',
-            borderRadius: '5px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            width: {xs:'130px',sm:'180px'}, 
-            color:'black',
-            fontSize:'10.5px',
-            textWrap:'nowrap'
-            }}
-            >
-            <CloudUploadOutlinedIcon />
-            <span style={{  marginLeft: {xs:'2px',md:'5px' }}}></span>
-            Upload Pofile Image
-            </Button>
-            </label>
-            </Box>
-
+            
+            <Box>
+                <Button
+                    variant="contained"
+                    component="label" // `component="label"` pour associer le bouton à l'input
+                    sx={{
+                    backgroundColor: '#ffffff',
+                    color: 'black',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    width: { xs: '130px', sm: '180px' },
+                    fontSize: '10.5px',
+                    textWrap: 'nowrap',
+                    }}
+                >
+                    <CloudUploadOutlinedIcon />
+                    <span style={{ marginLeft: '5px' }}>Upload Profile Image</span>
+                    
+                    <Input
+                    type="file"
+                    accept="image/*"
+                    name="project_image"
+                    onChange={setChange}
+                    style={{ display: 'none' }}
+                    />
+                </Button>
+                </Box>
 
             <Button
             variant="contained"

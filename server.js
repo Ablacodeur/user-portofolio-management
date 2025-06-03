@@ -10,10 +10,12 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import GitHubStrategy from "passport-github2";
 import fetch from "node-fetch";
-
+import multer from "multer";
 
 const app = express();
 const saltRounds = 10;
+const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
+
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
 
@@ -175,10 +177,11 @@ app.get("/projects", async (req, res) => {
   }
 });
 
-app.post("/projects", async (req, res) => {
-  const { project_name, demo_url, repo_url, description, user_id,project_image } = req.body;
+app.post("/projects" , upload.single("project_image") ,async (req, res) => {
+  const { project_name, demo_url, repo_url, description, user_id } = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
-  
+  const project_image = req.file ? req.file.filename : null; // Nom du fichier téléchargé
+  console.log("Nom du fichier téléchargé :", project_image);
   if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
@@ -194,10 +197,10 @@ app.post("/projects", async (req, res) => {
 
     // Insérer un nouveau projet
     const newProject = await pool.query(
-      `INSERT INTO project (project_name, demo_url, repo_url,description,user_Id,project_image) 
-       VALUES ($1, $2, $3, $4, $5, $6 ) 
+      `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id) 
+       VALUES ($1, $2, $3, $4, $5, $6)        
        RETURNING *`,
-      [project_name, demo_url, repo_url,description,user_id,project_image]
+      [project_name, demo_url, repo_url,description,project_image,user_id]
     );
     console.log("Nouveau projet ajouté :", newProject.rows[0]);
     return res.status(201).json(newProject.rows[0]);
