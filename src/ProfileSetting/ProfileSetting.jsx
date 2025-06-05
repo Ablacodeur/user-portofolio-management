@@ -1,12 +1,46 @@
 import { Avatar, Box, Button, FormLabel, Input, Stack, Textarea, Typography } from '@mui/joy'
-import React from 'react'
+import React, { useState } from 'react'
 import ResponsiveAppBar from '../ResponsiveAppBarResponsiveAppBar/ResponsiveAppBar'
 import { FormControl, InputLabel } from '@mui/material'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTheProfil } from '../store/user-project/profile-slice';
 
 export default function ProfileSetting() {
+
+            const navigate = useNavigate();
+            const dispatch = useDispatch();
+            const theProfil = useSelector((store) => store.PROFILE.theProfil);
+            const user_email = useSelector((state) => state.USER?.user.email);
+
+            function setChange(e) {
+                const { name, value, files } = e.target;
+              
+                if (e.target.type === "file") {
+                  
+                  dispatch(
+                    setTheProfil({
+                      ...theProfil,
+                      [name]: files[0], // Stocke le fichier sélectionné
+                    })
+                  );
+                  console.log("Fichier sélectionné :", theProfil.profil_image);
+                  console.log(`Fichier sélectionné :`, files[0]);
+                } else {
+                 
+                  dispatch(
+                    setTheProfil({
+                      ...theProfil,
+                      [name]: value,
+                    })
+                  );
+                  console.log(`Updated: ${name} = ${value}`);
+                }
+              } 
+    
   return (
     <Box>
         <ResponsiveAppBar  />
@@ -32,6 +66,20 @@ export default function ProfileSetting() {
             fontSize:{xs:'20px', sm:'25px', md:'30px'},
              }}>Profile settings</FormLabel>
 
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault(); 
+                try {
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/profile`,login);
+                    console.log('Connecte avec succès :', response.data.user);
+                    dispatch(setUser(response.data.user));
+                    navigate("/portofolio");
+                  } catch (error) {
+                    console.error('Erreur lors de la cconnection :', error);
+                  }
+                }}
+                >
+            
             <FormControl sx={{ display: 'flex', 
                justifyContent: 'center',               
                 gap: '30px' ,
@@ -155,6 +203,8 @@ export default function ProfileSetting() {
                     <Input
                     type="email"
                     placeholder="example@mail.com"
+                    name='email'
+                    value={user_email}
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -168,6 +218,8 @@ export default function ProfileSetting() {
                     <Input
                     type="text"
                     placeholder="Enter your job title"
+                    name='job'
+                    onChange={setChange}
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -182,6 +234,8 @@ export default function ProfileSetting() {
                     <Input
                     type="text"
                     placeholder="Enter your name"
+                    name='sudoname'
+                    onChange={setChange}
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -195,6 +249,8 @@ export default function ProfileSetting() {
                     aria-label="minimum height" 
                     minRows={5} 
                     placeholder="Enter a short intrioduction... "
+                    name='about_you'
+                    onChange={setChange}
                     sx={{
                         width: '100%',
                         padding: '10px',
@@ -205,6 +261,7 @@ export default function ProfileSetting() {
                     />
                     <Button
                         variant="contained"
+                        type='submit'
                         sx={{
                             display: 'flex',
                             width: '100px',
@@ -224,6 +281,7 @@ export default function ProfileSetting() {
                         Save
                     </Button>
             </FormControl>
+            </form>
         </Box>
     </Box>
   )
