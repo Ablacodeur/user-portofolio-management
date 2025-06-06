@@ -170,12 +170,12 @@ export default function FormShema({ onSubmit }) {
                     <Input
                     type="file"
                     accept="image/*"
-                    name="project_image"
+                    name="profil_image"
                     onChange={setChange}
                     style={{ display: 'none' }}
                     />
                 </Button>
-                </Box>
+            </Box>
 
             <Button
             variant="contained"

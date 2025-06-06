@@ -209,6 +209,40 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
     res.status(500).send("Erreur lors de l'ajout du projet.");
   }
 });
+
+app.post("/profil" , upload.single("profil_image") ,async (req, res) => {
+  const { email, job, sudoname,about_you} = req.body;
+  const profil_image = req.file ? req.file.filename : null; // Nom du fichier téléchargé
+  console.log("Nom du fichier téléchargé :", profil_image);
+  if (!sudoname || !about_you) {
+    return res.status(400).json({ error: "Tous les champs sont obligatoires." });
+  }
+
+  try {
+    // Vérifiez si un projet avec le même nom existe déjà
+    const existingSudo = await pool.query("SELECT * FROM profils WHERE sudoname = $1", [sudoname]);
+    const existingEmail= await pool.query("SELECT * FROM profils WHERE email = $1", [email]);
+
+    if (existingSudo.rows.length > 0 && existingEmail.rows.length > 0) {
+      return res.status(400).json({ error: "Ce profile existe déjà." });
+    }
+
+    // Insérer un nouveau projet
+    const newProfil = await pool.query(
+      `INSERT INTO profils (email, job, sudoname, about_you, profil_image) 
+       VALUES ($1, $2, $3, $4, $5)        
+       RETURNING *`,
+      [email, job, sudoname,about_you,profil_image]
+    );
+    console.log("Nouveau projet ajouté :", newProfil.rows[0]);
+    return res.status(201).json(newProfil.rows[0]);
+  } catch (error) {
+    console.error("Erreur SQL :", error);
+    res.status(500).send("Erreur lors de l'ajout du projet.");
+  }
+});
+
+
 // app.delete("/projects/:id", async (req, res) => {
 //   const { id } = req.params;
 //   try {
@@ -308,13 +342,7 @@ passport.use(
     }
   )
 );
-// passport.serializeUser((user, cb)=> {
-//   cb(null, user);
-// });
 
-// passport.deserializeUser((user, cb)=> {
-//   cb(null, user);
-// });
 passport.serializeUser((user, cb) => {
   console.log("Sérialisation de l'utilisateur :", user);
   cb(null, user.id); // Stocke uniquement l'ID utilisateur dans la session

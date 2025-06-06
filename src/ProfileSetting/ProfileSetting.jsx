@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, FormLabel, Input, Stack, Textarea, Typography } from '@mui/joy'
+import { Avatar, Box, Button, FormLabel, Input,Textarea, Typography } from '@mui/joy'
 import React, { useState } from 'react'
 import ResponsiveAppBar from '../ResponsiveAppBarResponsiveAppBar/ResponsiveAppBar'
 import { FormControl, InputLabel } from '@mui/material'
@@ -8,12 +8,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTheProfil } from '../store/user-project/profile-slice';
+import axios from 'axios';
 
 export default function ProfileSetting() {
 
             const navigate = useNavigate();
             const dispatch = useDispatch();
-            const theProfil = useSelector((store) => store.PROFILE.theProfil);
+            const theProfil = useSelector((store) => store.PROFILE.theProfil); 
             const user_email = useSelector((state) => state.USER?.user.email);
 
             function setChange(e) {
@@ -34,6 +35,7 @@ export default function ProfileSetting() {
                   dispatch(
                     setTheProfil({
                       ...theProfil,
+                      email: user_email,
                       [name]: value,
                     })
                   );
@@ -69,11 +71,19 @@ export default function ProfileSetting() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault(); 
+
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/profile`,login);
-                    console.log('Connecte avec succès :', response.data.user);
-                    dispatch(setUser(response.data.user));
-                    navigate("/portofolio");
+                    const formData = new FormData();
+                    // Ajoutez toutes les propriétés de theProject à formData
+                    for (const key in theProfil) {
+                        formData.append(key, theProfil[key]);
+                    }  
+
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/profil`,formData);
+                    console.log('new user profil :', response.data);
+                    dispatch(setTheProfil(response.data));
+                   
+                    alert('Profile updated successfully!');
                   } catch (error) {
                     console.error('Erreur lors de la cconnection :', error);
                   }
@@ -132,37 +142,35 @@ export default function ProfileSetting() {
                 padding: {xs:'5px', sm:'10px'},
                 borderRadius: '10px',
                 alignItems:'center',}}>
-            <Box >
-                <Input
+                            <Box>
+                <Button
+                    variant="contained"
+                    component="label" // `component="label"` pour associer le bouton à l'input
+                    sx={{
+                    backgroundColor: '#ffffff',
+                    color: 'black',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    width: { xs: '130px', sm: '180px' },
+                    fontSize: '10.5px',
+                    textWrap: 'nowrap',
+                    }}
+                >
+                    <CloudUploadOutlinedIcon />
+                    <span style={{ marginLeft: '5px' }}>Upload Profile Image</span>
+                    
+                    <Input
                     type="file"
                     accept="image/*"
-                    id="file-upload"
-                    sx={{ display: 'none' }} // Masque l'élément d'entrée
-                />
-                <label htmlFor="file-upload">
-                    <Button
-                    variant="contained"
-                    component="span" // Permet au bouton de fonctionner comme un label
-                    sx={{
-                        backgroundColor: '#ffffff',
-                        color: 'white',
-                        padding: '0px',
-                        borderRadius: '5px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        width: {xs:'130px',sm:'180px'}, 
-                        color:'black',
-                        fontSize:'10.5px',
-                        textWrap:'nowrap'
-                    }}
-                    >
-                    <CloudUploadOutlinedIcon />
-                    <span style={{  marginLeft: {xs:'2px',md:'5px' }}}></span>
-                    Upload Pofile Image
-                    </Button>
-                </label>
+                    name="profil_image"
+                    onChange={setChange}
+                    style={{ display: 'none' }}
+                    />
+                </Button>
             </Box>
-                
+
         
                 <Button
                     variant="contained"
