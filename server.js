@@ -211,7 +211,8 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
 });
 
 app.post("/profil" , upload.single("profil_image") ,async (req, res) => {
-  const { email, job, sudoname,about_you} = req.body;
+  const { email, job, sudoname,about_you, user_id} = req.body;
+  console.log("ID de l'utilisateur connecté :", user_id);
   const profil_image = req.file ? req.file.filename : null; // Nom du fichier téléchargé
   console.log("Nom du fichier téléchargé :", profil_image);
   if (!sudoname || !about_you) {
@@ -229,10 +230,10 @@ app.post("/profil" , upload.single("profil_image") ,async (req, res) => {
 
     // Insérer un nouveau projet
     const newProfil = await pool.query(
-      `INSERT INTO profils (email, job, sudoname, about_you, profil_image) 
-       VALUES ($1, $2, $3, $4, $5)        
+      `INSERT INTO profils (email, job, sudoname, about_you, profil_image,user_id)   
+       VALUES ($1, $2, $3, $4, $5, $6)        
        RETURNING *`,
-      [email, job, sudoname,about_you,profil_image]
+      [email, job, sudoname,about_you,profil_image,user_id]
     );
     console.log("Nouveau projet ajouté :", newProfil.rows[0]);
     return res.status(201).json(newProfil.rows[0]);

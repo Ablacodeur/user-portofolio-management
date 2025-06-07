@@ -16,6 +16,7 @@ export default function ProfileSetting() {
             const dispatch = useDispatch();
             const theProfil = useSelector((store) => store.PROFILE.theProfil); 
             const user_email = useSelector((state) => state.USER?.user.email);
+            const user = useSelector((state) => state.USER?.user);
 
             function setChange(e) {
                 const { name, value, files } = e.target;
@@ -78,6 +79,9 @@ export default function ProfileSetting() {
                     for (const key in theProfil) {
                         formData.append(key, theProfil[key]);
                     }  
+                    // Ajoutez l'ID utilisateur
+                    formData.append("user_id", user?.id);
+                    console.log('user-id:', user?.id);
 
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/profil`,formData);
                     console.log('new user profil :', response.data);

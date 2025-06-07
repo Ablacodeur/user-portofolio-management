@@ -18,8 +18,6 @@ export default function FormShema({ onSubmit }) {
     const projectList = useSelector((store) => store.PROJECT.projectList);
     const theProject = useSelector((store) => store.PROJECT.theProject);
     const user = useSelector((state) => state.USER?.user);
-    const uniqueId = `file-upload-${Math.random().toString(36).substr(2, 9)}`;
-
     
 
             function setChange(e) {
