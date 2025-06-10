@@ -9,10 +9,15 @@ import { setprojectList } from '../store/user-project/project-slice';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { setError, setUser } from '../store/user-project/userSlice';
+import { setprofilList, setTheProfil } from '../store/user-project/profile-slice';
 
 export default function PortofolioPage() {
         const projectList = useSelector((store) => store.PROJECT.projectList);
         const user = useSelector((state) => state.USER?.user);
+        const userID=useSelector((state) => state.USER?.user.id);
+        const profile= useSelector((store)=>store.PROFILE.theProfil)
+        console.log(userID);
+        
         console.log(user?.email); 
         const dispatch = useDispatch();
         const[page, setPage] = useState('portofolio');
@@ -22,7 +27,11 @@ export default function PortofolioPage() {
               const fetchData = async () => {
                 try {
                   const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
+                  const profil_response = await axios.get(`${import.meta.env.VITE_API_URL}/getprofil?user_id=${userID}` );
                   dispatch(setprojectList(response.data));
+                  console.log("Liste des profils récupérée :", profil_response.data[0]);
+                  dispatch(setTheProfil(profil_response.data[0]));
+                  dispatch(setprofilList(profil_response.data))
                 } catch (err) {
                   console.error(err);
                 }
@@ -90,12 +99,12 @@ export default function PortofolioPage() {
          marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' }, 
          gap: '20px',display: 'flex', 
          flexDirection: 'column', alignItems: 'flex-start' }}>
-         <h5> Bienvenue, {user?.email}</h5>
+       
          <p>Ceci est votre portfolio personnalisé.</p>
-            <h1 style={{ fontSize: '40px',padding:'0px' }}>Trace Adkins
+            <h1 style={{ fontSize: '40px',padding:'0px' }}>{profile.sudoname}
             <br/>
             
-            <span style={{ fontSize: '20px', color: '#989494'}}>Rock singer</span>
+            <span style={{ fontSize: '20px', color: '#989494'}}>{profile.job}</span>
             </h1>
             <Button variant="outlined" sx={{ 
                 border: '1px solid #989494',
@@ -103,13 +112,12 @@ export default function PortofolioPage() {
                 padding: '5px 10px',
              }}>
             <EmailOutlinedIcon sx={{ marginRight: '5px' }} />
-                contact
+            {profile.email}
             </Button>
             <p style={{fontSize: '16px' }}>
                 <span style={{ color:'#989494'}}>Bio</span>
                 <br/>
-                A passionate Junior Front-end Developer with extensive experience in HTML, CSS, JavaScript, and React. Proven track record of developing user-friendly interfaces and optimizing
-                website performance. Eager to learn and grow in the tech industry.
+                {profile.about_you}
             </p>
             <hr style={{ width: '100%', border: '1px solid #989494', marginTop: '20px' }} />
 

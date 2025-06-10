@@ -210,6 +210,21 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
   }
 });
 
+//profil routes
+
+app.get("/getprofil", async (req, res) => {
+  const {user_id}=req.query; //utilsation de point query car je suis dans une requte  GET FIAS QUE JE PREND LE PARAMS
+  console.log("User ID reçu :", user_id);
+  
+  try {
+    const result = await pool.query("SELECT * FROM profils WHERE user_id = $1", [user_id]);
+    res.json(result.rows);    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erreur serveur lors de la récupération des tâches");
+  }
+});
+
 app.post("/profil" , upload.single("profil_image") ,async (req, res) => {
   const { email, job, sudoname,about_you, user_id} = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
