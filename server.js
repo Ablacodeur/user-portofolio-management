@@ -11,10 +11,15 @@ import { Strategy } from "passport-local";
 import GitHubStrategy from "passport-github2";
 import fetch from "node-fetch";
 import multer from "multer";
+import path from "path";
 
 const app = express();
 const saltRounds = 10;
 const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
+// Convertir `import.meta.url` en chemin de fichier
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
@@ -43,6 +48,19 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
+import { fileURLToPath } from 'url';
+
+
+// Configuration pour servir les fichiers statiques
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.svg')) {
+      res.setHeader('Content-Type', 'image/svg+xml'); // Définit le type MIME pour les fichiers SVG
+    }
+    console.log("Fichier servi :", path);
+  },
+}));
+
 
 app.get("/portofolio", (req, res) => {
   console.log(req.user);
@@ -228,8 +246,7 @@ app.get("/getprofil", async (req, res) => {
 app.post("/profil" , upload.single("profil_image") ,async (req, res) => {
   const { email, job, sudoname,about_you, user_id} = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
-  const profil_image = req.file ? req.file.filename : null; // Nom du fichier téléchargé
-  console.log("Nom du fichier téléchargé :", profil_image);
+  const profil_image = req.file ? `/uploads/${req.file.filename}` : null; // URL de l'image  console.log("Nom du fichier téléchargé :", profil_image);
   if (!sudoname || !about_you) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }

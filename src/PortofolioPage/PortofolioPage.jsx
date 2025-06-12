@@ -16,12 +16,18 @@ export default function PortofolioPage() {
         const user = useSelector((state) => state.USER?.user);
         const userID=useSelector((state) => state.USER?.user.id);
         const profile= useSelector((store)=>store.PROFILE.theProfil)
+        console.log("Image de profile :", profile.profil_image);
+        console.log("URL complète de l'image :", `/uploads/${profile?.profil_image}`);
         console.log(userID);
         
         console.log(user?.email); 
         const dispatch = useDispatch();
         const[page, setPage] = useState('portofolio');
         const navigate = useNavigate();
+
+        const imagePath = profile?.profil_image?.startsWith('/uploads/')
+        ? profile.profil_image
+        : `/uploads/${profile.profil_image}`;
     
         useEffect(() => {
               const fetchData = async () => {
@@ -81,7 +87,7 @@ export default function PortofolioPage() {
                 marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
                 marginTop: {xs:'-60px', md:'-100px'},
                 position: 'absolute',
-                backgroundImage: `url(https://picsum.photos/id/1/200/300)`,
+                backgroundImage: imagePath ? `url(${imagePath})` : 'none',
                 zIndex: '1' ,
                 border: '5px solid white',
                 borderRadius: '50%',
