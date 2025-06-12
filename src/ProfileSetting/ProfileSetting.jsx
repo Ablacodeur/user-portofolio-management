@@ -216,7 +216,7 @@ export default function ProfileSetting() {
                     type="email"
                     placeholder="example@mail.com"
                     name='email'
-                    value={user_email}
+                    value={theProfil?.email || user_email} 
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -232,6 +232,7 @@ export default function ProfileSetting() {
                     placeholder="Enter your job title"
                     name='job'
                     onChange={setChange}
+                    value={theProfil?.job || ''}
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -248,6 +249,7 @@ export default function ProfileSetting() {
                     placeholder="Enter your name"
                     name='sudoname'
                     onChange={setChange}
+                    value={theProfil?.sudoname || ''}
                     sx={{
                         padding: '10px',
                         borderRadius: '5px',
@@ -263,6 +265,7 @@ export default function ProfileSetting() {
                     placeholder="Enter a short intrioduction... "
                     name='about_you'
                     onChange={setChange}
+                    value={theProfil?.about_you || ''} 
                     sx={{
                         width: '100%',
                         padding: '10px',
