@@ -12,11 +12,11 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { setprojectList, setTheProject } from '../store/user-project/project-slice';
 import axios from 'axios';
-export default function FormShema({ onSubmit }) {
+export default function FormShema({ onSubmit,project }) {
 
     const dispatch = useDispatch();
     const projectList = useSelector((store) => store.PROJECT.projectList);
-    const theProject = useSelector((store) => store.PROJECT.theProject);
+    const theProject = useSelector((store) => store.PROJECT.theProject);    
     const user = useSelector((state) => state.USER?.user);
     
 
@@ -214,6 +214,7 @@ export default function FormShema({ onSubmit }) {
                 <Input
                 type="text"
                 onChange={setChange}
+                value={theProject?.project_name || ''}
                 placeholder="Enter project name"
                 name='project_name'
                 sx={{
@@ -229,6 +230,7 @@ export default function FormShema({ onSubmit }) {
             <Input
             type="text"
             onChange={setChange}
+            value={theProject?.demo_url || ''}
             placeholder="Enter your job title"
             name='demo_url'
             sx={{
@@ -245,6 +247,7 @@ export default function FormShema({ onSubmit }) {
             type="text"
             placeholder="Enter your name"
             onChange={setChange}
+            value={theProject?.repo_url || ''}
             name='repo_url'
             sx={{
             padding: '10px',
@@ -260,6 +263,7 @@ export default function FormShema({ onSubmit }) {
             minRows={5} 
             placeholder="Enter a short intrioduction... "
             onChange={setChange}
+            value={theProject?.description || ''}
             sx={{
             width: '100%',
             padding: '10px',

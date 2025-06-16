@@ -6,19 +6,23 @@ import CardComponent from "../Card/CardComponent";
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import s from "./style.module.css";
-import { setprojectList } from '../store/user-project/project-slice';
+import { setprojectList, setTheProject } from '../store/user-project/project-slice';
 import AddIcon from '@mui/icons-material/Add';
 import FormShema from '../FormShema/FormShema';
 
 export default function ModalCard({ setGlobalAlert }) {
     const [open, setOpen] = React.useState(true);
     const[isedited,setIsedited]=useState(false);
-    const [theProject, setTheProject] = React.useState({});
+    // const [theProject, setTheProject] = React.useState({});
     const [statusName, setStatusName] = React.useState('');
     const [selectedStatus, setSelectedStatus] = React.useState('');
     const dispatch = useDispatch();
     const[page, setPage] = useState('setting');
     const projectList = useSelector((store) => store.PROJECT.projectList);
+    const theProject = useSelector((store) => store.PROJECT.theProject);
+    console.log("Liste des projets :", projectList);
+    console.log("Projet sélectionné :", theProject);
+    
     const [reload, setReload] = React.useState(false);
   
     useEffect(() => {
@@ -101,7 +105,7 @@ export default function ModalCard({ setGlobalAlert }) {
               variant="outlined"
               color="neutral"
               onClick={() => {
-                setTheProject({ name: '', description: '', status: '', icon: '' });
+               
                 setSelectedStatus('');
                 setStatusName('');
                 setOpen(!open);
@@ -145,8 +149,10 @@ export default function ModalCard({ setGlobalAlert }) {
               >
                 <Button
                   variant="plain"
-                  onClick={() => setOpen(false)}
-                  sx={{ position: 'absolute', top: 8, right: 8 }}
+                  onClick={() => {
+                  setOpen(false)
+                  dispatch(setTheProject(''))} // Ferme le contenu et réinitialise le projet sélectionné
+                }
                 >
                   <svg
                     width="20"
@@ -187,7 +193,7 @@ export default function ModalCard({ setGlobalAlert }) {
                   variant="outlined"
                   color="neutral"
                   onClick={() => {
-                    setTheProject(project); 
+                    dispatch(setTheProject(project)); // Met à jour le projet sélectionné dans le store
                     setIsedited(isedited === id ? null : id); // Ouvre ou ferme la carte cliquée
                   }}
                   sx={{
@@ -195,7 +201,10 @@ export default function ModalCard({ setGlobalAlert }) {
                     height: { xs: '15%' },
                   }}
                 >
-                  <CardComponent project={project} page={page} />
+                  <CardComponent 
+                   project={project}
+                   page={page}
+                    />
                 </Button>
 
                 {/* Contenu conditionnel du "modal" sous la carte */}
@@ -249,7 +258,7 @@ export default function ModalCard({ setGlobalAlert }) {
                     {/* Formulaire */}
                     <FormShema 
                     />
-                  </Box>
+                  </Box> 
                 )}
               </React.Fragment>
             ))}
