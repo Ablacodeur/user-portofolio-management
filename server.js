@@ -195,11 +195,20 @@ app.get("/projects", async (req, res) => {
   }
 });
 
-app.post("/projects" , upload.single("project_image") ,async (req, res) => {
+app.post("/projects", upload.single("project_image"), async (req, res) => {
   const { project_name, demo_url, repo_url, description, user_id } = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
-  const project_image = req.file ? req.file.filename : null; // Nom du fichier téléchargé
+
+  // Vérifiez si le fichier a été correctement reçu
+  const project_image = req.file ? `/uploads/${req.file.filename}` : null; // Nom du fichier téléchargé
+
+  if (!project_image) {
+    console.error("Erreur : Aucun fichier image téléchargé.");
+    return res.status(400).json({ error: "Aucun fichier image téléchargé. Veuillez ajouter une image." });
+  }
+
   console.log("Nom du fichier téléchargé :", project_image);
+
   if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
@@ -210,7 +219,7 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
     const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
     if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
-      return res.status(400).json({ error: "Un projet avec ce nom  et repo existe déjà." });
+      return res.status(400).json({ error: "Un projet avec ce nom et repo existe déjà." });
     }
 
     // Insérer un nouveau projet
@@ -218,8 +227,9 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
       `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id) 
        VALUES ($1, $2, $3, $4, $5, $6)        
        RETURNING *`,
-      [project_name, demo_url, repo_url,description,project_image,user_id]
+      [project_name, demo_url, repo_url, description, project_image, user_id]
     );
+
     console.log("Nouveau projet ajouté :", newProject.rows[0]);
     return res.status(201).json(newProject.rows[0]);
   } catch (error) {
@@ -227,7 +237,6 @@ app.post("/projects" , upload.single("project_image") ,async (req, res) => {
     res.status(500).send("Erreur lors de l'ajout du projet.");
   }
 });
-
 //profil routes
 
 app.get("/getprofil", async (req, res) => {

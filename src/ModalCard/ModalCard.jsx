@@ -9,11 +9,11 @@ import s from "./style.module.css";
 import { setprojectList, setTheProject } from '../store/user-project/project-slice';
 import AddIcon from '@mui/icons-material/Add';
 import FormShema from '../FormShema/FormShema';
+import AddForm from '../AddForm/AddForm';
 
 export default function ModalCard({ setGlobalAlert }) {
     const [open, setOpen] = React.useState(true);
-    const[isedited,setIsedited]=useState(false);
-    // const [theProject, setTheProject] = React.useState({});
+    const[isedited,setIsedited]=useState(null);
     const [statusName, setStatusName] = React.useState('');
     const [selectedStatus, setSelectedStatus] = React.useState('');
     const dispatch = useDispatch();
@@ -38,12 +38,13 @@ export default function ModalCard({ setGlobalAlert }) {
       fetchData();
     }, []);
   
-    function handleClick(project) {
-      setOpen(true);
-      if (project) {
-        setTheProject(project);
+    function handleClick() {
+      if (isedited !== null) {
+        setIsedited(null); // Ferme le formulaire d'édition si un projet est en cours d'édition
       }
-    }
+      setOpen(!open); // Ouvre ou ferme le formulaire "Add project"
+      dispatch(setTheProject({ })); // Réinitialise le projet sélectionné
+}
   
     async function handleDelete(projectId) {
       if (window.confirm('Do you really want to delete the project?')) {
@@ -104,12 +105,7 @@ export default function ModalCard({ setGlobalAlert }) {
             <Button
               variant="outlined"
               color="neutral"
-              onClick={() => {
-               
-                setSelectedStatus('');
-                setStatusName('');
-                setOpen(!open);
-              }}
+              onClick={handleClick}             
               sx={{
                 display: 'flex',
                 height: { xs: '35px', md: '85px' },
@@ -128,7 +124,7 @@ export default function ModalCard({ setGlobalAlert }) {
                 Add project
               </Typography>
             </Button>            
-            {open && (
+            {open && isedited === null &&  (
             <Box
               sx={{
                 position: 'relative',
@@ -149,10 +145,7 @@ export default function ModalCard({ setGlobalAlert }) {
               >
                 <Button
                   variant="plain"
-                  onClick={() => {
-                  setOpen(false)
-                  dispatch(setTheProject(''))} // Ferme le contenu et réinitialise le projet sélectionné
-                }
+                  onClick={() => setOpen(false)}
                 >
                   <svg
                     width="20"
@@ -178,8 +171,7 @@ export default function ModalCard({ setGlobalAlert }) {
               </Box>
   
               {/* Formulaire */}
-              <FormShema 
-              />
+              <AddForm  /> 
 
             </Box>
           )}
@@ -193,10 +185,13 @@ export default function ModalCard({ setGlobalAlert }) {
                   variant="outlined"
                   color="neutral"
                   onClick={() => {
-                    dispatch(setTheProject(project)); // Met à jour le projet sélectionné dans le store
-                    setIsedited(isedited === id ? null : id); // Ouvre ou ferme la carte cliquée
-                  }}
-                  sx={{
+                      if (open) {
+                        setOpen(false); // Ferme le formulaire "Add project" si ouvert
+                      }
+                      dispatch(setTheProject(project)); 
+                      setIsedited(isedited === id ? null : id); 
+                    }}                  
+                    sx={{
                     width: { xs: '100%', sm: '600px', md: '600px', lg: '800px' },
                     height: { xs: '15%' },
                   }}
@@ -208,7 +203,7 @@ export default function ModalCard({ setGlobalAlert }) {
                 </Button>
 
                 {/* Contenu conditionnel du "modal" sous la carte */}
-                {isedited === id && (
+                {isedited === id  && (
                   <Box
                     sx={{
                       position: 'relative',
@@ -256,8 +251,7 @@ export default function ModalCard({ setGlobalAlert }) {
                     </Box>
 
                     {/* Formulaire */}
-                    <FormShema 
-                    />
+                      <FormShema id={isedited} /> 
                   </Box> 
                 )}
               </React.Fragment>

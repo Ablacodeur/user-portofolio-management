@@ -12,27 +12,13 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { setprojectList, setTheProject } from '../store/user-project/project-slice';
 import axios from 'axios';
-export default function FormShema({ id}) {
+export default function AddForm({ }) {
 
     const dispatch = useDispatch();
     const projectList = useSelector((store) => store.PROJECT.projectList);
-    const theProject = useSelector((store) => store.PROJECT.theProject);    
     const user = useSelector((state) => state.USER?.user);
+    const theProject = useSelector((store) => store.PROJECT.theProject);    
     
-            useEffect(() => {
-                if (id !== null) {
-                // Si un `id` est fourni, chargez les données du projet correspondant
-                const projectToEdit = projectList.find((project) => project.id === id);
-                if (projectToEdit) {
-                    dispatch(setTheProject(projectToEdit)); // Préremplit le formulaire avec les données du projet
-                }
-                } else {
-                // Si `id` est `null`, réinitialisez le formulaire
-                dispatch(setTheProject({})); // Réinitialise le formulaire pour un nouveau projet
-                }
-            }, [id, dispatch, projectList]);
-            
-
 
             function setChange(e) {
                 const { name, value, files } = e.target;
@@ -58,13 +44,6 @@ export default function FormShema({ id}) {
                   console.log(`Updated: ${name} = ${value}`);
                 }
               } 
-
-            function handleClick(project) {
-                setOpen(true);
-                if (project) {
-                setTheProject(project);
-                }
-            }
   
   
   return (
@@ -228,7 +207,6 @@ export default function FormShema({ id}) {
                 <Input
                 type="text"
                 onChange={setChange}
-                value={theProject?.project_name || ''}
                 placeholder="Enter project name"
                 name='project_name'
                 sx={{
@@ -244,7 +222,6 @@ export default function FormShema({ id}) {
             <Input
             type="text"
             onChange={setChange}
-            value={theProject?.demo_url || ''}
             placeholder="Enter your job title"
             name='demo_url'
             sx={{
@@ -261,7 +238,6 @@ export default function FormShema({ id}) {
             type="text"
             placeholder="Enter your name"
             onChange={setChange}
-            value={theProject?.repo_url || ''}
             name='repo_url'
             sx={{
             padding: '10px',
@@ -277,7 +253,6 @@ export default function FormShema({ id}) {
             minRows={5} 
             placeholder="Enter a short intrioduction... "
             onChange={setChange}
-            value={theProject?.description || ''}
             sx={{
             width: '100%',
             padding: '10px',
