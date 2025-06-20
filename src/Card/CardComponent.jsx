@@ -3,8 +3,20 @@ import { Box, Card, CardContent, Typography } from '@mui/material'
 import React from 'react'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import { useSelector } from 'react-redux';
 
 export default function CardComponent({ project ,page }) {
+
+  // console.log("Image du project :", project.project_image);
+  console.log(" le project :", project);
+
+
+  const imagePath = project?.project_image
+  ? project.project_image.startsWith('/uploads/')
+    ? project.project_image
+    : `/uploads/${project.project_image}`
+  : '/uploads/default-image.png'; // Chemin de l'image par défaut
+
   return (
     <Card
       variant="none"
@@ -33,7 +45,7 @@ export default function CardComponent({ project ,page }) {
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0px 0.2px 0px #ccc',
-            backgroundImage: `url('https://picsum.photos/id/237/200/300/?blur=4')`,  
+            backgroundImage: imagePath ? `url(${imagePath})` : 'none',
             border: '1px solid #ccc',
             marginTop: {xs:'5px', md:'30px'},
             marginBottom: {xs:'3px', md:'30px'},
@@ -42,7 +54,7 @@ export default function CardComponent({ project ,page }) {
           }}
         >
           <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> 
-          <img src='https://picsum.photos/id/237/200/300' alt="icon" style={{ width: '60%', maxHeight: '100%' }} />
+          <img src={imagePath} alt="icon" style={{ width: '60%', maxHeight: '100%' }} />
           </Box>
         </Box>
       {/* 📌 CONTENU TEXTE */}

@@ -98,6 +98,7 @@ export default function FormShema({ id}) {
 
                 // Mettre à jour la liste des projets dans le store Redux
                 dispatch(setprojectList([...projectList, response.data]));
+                dispatch(setTheProject(response.data));
                 } catch (error) {
                 console.error("Erreur lors de la soumission :", error);
                 }
