@@ -204,10 +204,10 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
   // Vérifiez si le fichier a été correctement reçu
   const project_image = req.file ? `/uploads/${req.file.filename}` : null; // Nom du fichier téléchargé
 
-  if (!project_image) {
-    console.error("Erreur : Aucun fichier image téléchargé.");
-    return res.status(400).json({ error: "Aucun fichier image téléchargé. Veuillez ajouter une image." });
-  }
+  // if (!project_image) {
+  //   console.error("Erreur : Aucun fichier image téléchargé.");
+  //   return res.status(400).json({ error: "Aucun fichier image téléchargé. Veuillez ajouter une image." });
+  // }
 
   console.log("Nom du fichier téléchargé :", project_image);
 
@@ -221,7 +221,16 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
     const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
     if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
-      return res.status(400).json({ error: "Un projet avec ce nom et repo existe déjà." });
+      // Mettre à jour le profil existant
+      const updatedProject = await pool.query(
+        `UPDATE project 
+         SET demo_url = $1, description = $2, project_image = COALESCE($3, project_image) , repo_url = $5
+         WHERE project_name = $4
+         RETURNING *`,
+        [demo_url, description, project_image, project_name, repo_url]
+      );
+      console.log("Projet mis à jour :", updatedProject.rows[0]);
+      return res.status(200).json(updatedProject.rows[0]); 
     }
 
     // Insérer un nouveau projet
