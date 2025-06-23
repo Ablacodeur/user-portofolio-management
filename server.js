@@ -185,15 +185,17 @@ app.post("/signin", (req, res, next) => {
 });
 // ✅ Routes for the project
 
-app.get("/projects", async (req, res) => {
+app.get("/getproject", async (req, res) => {
+  const {user_id}=req.query; //utilsation de point query car je suis dans une requte  GET FIAS QUE JE PREND LE PARAMS
+  console.log("User ID reçu :", user_id);
+  
   try {
-    const result = await pool.query("SELECT * FROM project");
+    const result = await pool.query("SELECT * FROM project WHERE user_id = $1", [user_id]);
     res.json(result.rows);    
   } catch (error) {
     console.error(error);
     res.status(500).send("Erreur serveur lors de la récupération des tâches");
-  }
-});
+  }});
 
 app.post("/projects", upload.single("project_image"), async (req, res) => {
   const { project_name, demo_url, repo_url, description, user_id } = req.body;

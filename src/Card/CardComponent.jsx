@@ -53,9 +53,9 @@ export default function CardComponent({ project ,page }) {
             
           }}
         >
-          <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> 
+          {/* <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> 
           <img src={imagePath} alt="icon" style={{ width: '60%', maxHeight: '100%' }} />
-          </Box>
+          </Box> */}
         </Box>
       {/* 📌 CONTENU TEXTE */}
       <Box sx={{ 

@@ -32,12 +32,14 @@ export default function PortofolioPage() {
         useEffect(() => {
               const fetchData = async () => {
                 try {
-                  const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
                   const profil_response = await axios.get(`${import.meta.env.VITE_API_URL}/getprofil?user_id=${userID}` );
-                  dispatch(setprojectList(response.data));
-                  console.log("Liste des profils récupérée :", profil_response.data[0]);
+                  const projects_response = await axios.get(`${import.meta.env.VITE_API_URL}/getproject?user_id=${userID}` );
+
+                  // console.log("Liste des profils récupérée :", profil_response.data[0]);
                   dispatch(setTheProfil(profil_response.data[0]));
-                  dispatch(setprofilList(profil_response.data))
+                  dispatch(setprofilList(profil_response.data));
+                  dispatch(setprojectList(projects_response.data));
+                  // console.log("Liste des projets du store Redux :", projects_response.data);
                 } catch (err) {
                   console.error(err);
                 }
