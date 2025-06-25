@@ -94,6 +94,7 @@ export default function ModalCard({ setGlobalAlert }) {
             <FormLabel sx={{display: 'flex', 
             justifyContent: 'center', 
             width: {xs: '100%', sm: '95%', md: '60%' },
+
             flexDirection:'column',
             textAlign:'flex-start',
             alignItems:'flex-start',

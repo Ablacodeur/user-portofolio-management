@@ -59,16 +59,6 @@ export default function ProfileSetting() {
             marginTop:'10px',
             marginBottom:'30px',
         }}>
-            <FormLabel sx={{display: 'flex', 
-            justifyContent: 'center', 
-            width: {xs: '100%', sm: '95%', md: '60%' },
-            flexDirection:'column',
-            textAlign:'flex-start',
-            alignItems:'flex-start',
-            fontWeight:'bold',
-            fontSize:{xs:'20px', sm:'25px', md:'30px'},
-             }}>Profile settings</FormLabel>
-
             <form
               onSubmit={async (e) => {
                 e.preventDefault(); 
@@ -93,6 +83,20 @@ export default function ProfileSetting() {
                   }
                 }}
                 >
+             <FormLabel sx={{display: 'flex', 
+                justifyContent: 'center', 
+                width: {xs: '100%', sm: '95%', md: '60%' },
+                flexDirection:'column',
+                textAlign:'flex-start',
+                alignItems:'flex-start',
+                fontWeight:'bold',
+                fontSize:{xs:'20px', sm:'25px', md:'30px'},
+                marginBottom:'30px'
+                }}>Profile settings
+
+            </FormLabel>
+
+
             
             <FormControl sx={{ display: 'flex', 
                justifyContent: 'center',               
@@ -103,7 +107,7 @@ export default function ProfileSetting() {
                 backgroundColor: 'white',
                 border: '1px solid #ccc',
                 height: 'auto',
-                width: {xs: '100%', sm: '95%', md: '60%' },
+                width: { xs: '100%', sm: '600px', md: '600px', lg: '800px' },
                }}>
             {/* profile image session */}
                <Box sx={{ display: 'flex',  
