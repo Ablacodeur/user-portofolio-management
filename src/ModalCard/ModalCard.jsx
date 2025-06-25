@@ -178,6 +178,8 @@ export default function ModalCard({ setGlobalAlert }) {
 
             </Box>
             {/* Liste des tâches */}
+            <Box sx={{ marginBottom:'30px'}}>
+
             {projectList.map((project, id) => (
               <React.Fragment key={id}>
                 {/* Bouton de la carte */}
@@ -210,7 +212,7 @@ export default function ModalCard({ setGlobalAlert }) {
                       width: '100%',
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      padding: '16px',
+                      // padding: '16px',
                       boxShadow: 'lg',
                       marginTop: '10px',
                     }}
@@ -256,6 +258,7 @@ export default function ModalCard({ setGlobalAlert }) {
                 )}
               </React.Fragment>
             ))}
+            </Box>
         </Box>
       </React.Fragment>
     );

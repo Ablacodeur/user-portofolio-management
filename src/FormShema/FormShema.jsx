@@ -232,6 +232,7 @@ export default function FormShema({ id}) {
                 value={theProject?.project_name || ''}
                 placeholder="Enter project name"
                 name='project_name'
+                disabled 
                 sx={{
                     padding: '10px',
                     borderRadius: '5px',
@@ -264,6 +265,7 @@ export default function FormShema({ id}) {
             onChange={setChange}
             value={theProject?.repo_url || ''}
             name='repo_url'
+            disabled  
             sx={{
             padding: '10px',
             borderRadius: '5px',

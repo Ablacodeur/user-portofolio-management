@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 export default function CardComponent({ project ,page }) {
 
-  // console.log("Image du project :", project.project_image);
   console.log(" le project :", project);
 
 
@@ -101,7 +100,9 @@ export default function CardComponent({ project ,page }) {
             <Box sx={{ display: 'flex', gap: '10px' }}>
             <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
             <Typography sx={{ display: 'flex', gap: '5px',fontSize:{xs:'12px',md:'15px'} }}>
-            Demo URL
+            <a href={project.demo_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Demo URL
+            </a>            
             <Stack>
             <OpenInNewOutlinedIcon  sx={{ width:{xs:'15px', md:'20px'},height:{xs:'15px', md:'20px'}, fontSize:'small'}}/>
             </Stack>
@@ -109,7 +110,9 @@ export default function CardComponent({ project ,page }) {
           </Button>
           <Button variant="outlined" sx={{ backgroundColor:'white',marginTop:'20px',border:'1px solid #E3E8EF',color:'#595a5c' }}> 
           <Typography sx={{ display: 'flex', gap: '5px',fontSize:{xs:'12px',md:'15px'} }}>
-            Repository URL
+            <a href={project.repo_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Repository URL
+            </a>            
             <Stack sx={{ display: 'flex',justifyContent: 'center', alignItems: 'center' }}> 
             <OpenInNewOutlinedIcon  sx={{ width:{xs:'15px', md:'20px'},height:{xs:'15px', md:'20px'}, fontSize:'small'}}/>
             </Stack>

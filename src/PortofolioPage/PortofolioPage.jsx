@@ -70,7 +70,7 @@ export default function PortofolioPage() {
             }, [dispatch, user]);    
         
     return (
-      <Box sx={{ position:'relative' }}>
+      <Box sx={{ position:'relative'}}>
         <Box
           sx={{
             height: '23vh',
@@ -103,10 +103,10 @@ export default function PortofolioPage() {
         </Box>
 
         </Link>
-        <Box sx={{ marginTop: '100px',marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
+        <Box sx={{ marginTop: '100px', marginLeft: { xs: '30px', sm: '100px', md: '200px',lg: '300px' },
          marginRight: { xs: '30px', sm: '100px', md: '200px',lg: '300px' }, 
          gap: '20px',display: 'flex', 
-         flexDirection: 'column', alignItems: 'flex-start' }}>
+         flexDirection: 'column', alignItems: 'flex-start'}}>
        
          <p>Ceci est votre portfolio personnalisé.</p>
             <h1 style={{ fontSize: '40px',padding:'0px' }}>{profile.sudoname}
@@ -120,7 +120,10 @@ export default function PortofolioPage() {
                 padding: '5px 10px',
              }}>
             <EmailOutlinedIcon sx={{ marginRight: '5px' }} />
-            {profile.email}
+            <a href={`mailto:${profile.email}`} mailto target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+              {profile.email}
+            </a>
+            
             </Button>
             <p style={{fontSize: '16px' }}>
                 <span style={{ color:'#989494'}}>Bio</span>
@@ -130,6 +133,7 @@ export default function PortofolioPage() {
             <hr style={{ width: '100%', border: '1px solid #989494', marginTop: '20px' }} />
 
         {/* Liste des tâches */}
+        <Box sx={{ marginBottom:'50px',width: '100%',}}>
             {projectList.map((project, id) => (
                 <React.Fragment key={id}>
                     {/* Bouton de la carte */}
@@ -145,6 +149,7 @@ export default function PortofolioPage() {
                     </Button>
                     </React.Fragment>
         ))}
+        </Box>
         </Box>
       </Box>
     );
