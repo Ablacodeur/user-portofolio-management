@@ -179,7 +179,7 @@ export default function ModalCard({ setGlobalAlert }) {
 
             </Box>
             {/* Liste des tâches */}
-            <Box sx={{ marginBottom:'30px'}}>
+            <Box sx={{ marginBottom:'50px',width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}> 
 
             {projectList.map((project, id) => (
               <React.Fragment key={id}>

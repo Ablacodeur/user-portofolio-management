@@ -306,19 +306,19 @@ app.post("/profil", upload.single("profil_image"), async (req, res) => {
   }
 });
 
-// app.delete("/projects/:id", async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const deleteResult = await pool.query('DELETE FROM project WHERE id = $1', [id]);
-//     if (deleteResult.rowCount === 0) {
-//       return res.status(404).json({ error: "Tâche non trouvée" });
-//     }
-//     res.status(200).json({ message: "Tâche supprimée avec succès" });
-//   } catch (error) {
-//     console.error("Erreur lors de la suppression :", error);
-//     res.status(500).json({ error: "Erreur lors de la suppression de la tâche" });
-//   }
-// });
+app.delete("/projects/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleteResult = await pool.query('DELETE FROM project WHERE id = $1', [id]);
+    if (deleteResult.rowCount === 0) {
+      return res.status(404).json({ error: "Tâche non trouvée" });
+    }
+    res.status(200).json({ message: "Tâche supprimée avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression :", error);
+    res.status(500).json({ error: "Erreur lors de la suppression de la tâche" });
+  }
+});
 
 //copie des  elements du signing ou login dans la strategie AKA local strategy
 passport.use(new Strategy( async function verify(username,  password, cb){

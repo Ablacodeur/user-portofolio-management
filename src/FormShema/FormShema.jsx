@@ -10,7 +10,7 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useDispatch, useSelector } from 'react-redux';
-import { setprojectList, setTheProject } from '../store/user-project/project-slice';
+import { deleteProject, setprojectList, setTheProject } from '../store/user-project/project-slice';
 import axios from 'axios';
 export default function FormShema({ id}) {
 
@@ -65,7 +65,21 @@ export default function FormShema({ id}) {
                 setTheProject(project);
                 }
             }
-  
+            async function handleDelete(projectId) {
+                if (window.confirm("Do you really want to delete this project")) {
+                    try {
+                        await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${projectId}`);
+                        
+                        dispatch(deleteProject(projectId)); 
+                        // setReload(true);
+                        // setOpen(false);
+                        // setGlobalAlert('delete');
+                    } catch (error) {
+                        console.error("Erreur lors de la suppression de la tâche :", error);
+                    }
+                }
+              }
+          
   
   return (
     <div>
@@ -321,6 +335,7 @@ export default function FormShema({ id}) {
         
             </Button>
             <Button
+            onClick={() => handleDelete(theProject.id)}
             variant="contained"
             sx={{
                 display: 'flex',
