@@ -199,8 +199,9 @@ app.get("/getproject", async (req, res) => {
 
 app.post("/projects", upload.single("project_image"), async (req, res) => {
   const { project_name, demo_url, repo_url, description, user_id } = req.body;
-  console.log("ID de l'utilisateur connecté :", user_id);
-
+  console.log("Requête complète reçue :", req.body);
+  console.log("Type de user_id :", typeof req.body.user_id);
+  console.log("Valeur brute de user_id :", req.body.user_id);
   // Vérifiez si le fichier a été correctement reçu
   const project_image = req.file ? `/uploads/${req.file.filename}` : null; // Nom du fichier téléchargé
 
@@ -213,6 +214,12 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
 
   if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
+  }
+  // Convertir `user_id` en entier
+  const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
+  if (isNaN(userId)) {
+    console.error("Erreur : user_id n'est pas un entier valide :", user_id);
+    return res.status(400).json({ error: "ID utilisateur invalide." });
   }
 
   try {

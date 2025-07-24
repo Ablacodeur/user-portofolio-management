@@ -25,7 +25,7 @@ export const projectSlice = createSlice({
         },
         deleteProject: (currentSlice, action) => {
             currentSlice.projectList = currentSlice.projectList.filter(
-                (project) => project.id !== action.payload.id
+                (project) => project.id !== action.payload // Utilisez directement action.payload
             );
         },
         

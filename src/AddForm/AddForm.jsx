@@ -60,8 +60,8 @@ export default function AddForm({ }) {
                 }
 
                 // Ajoutez l'ID utilisateur
-                formData.append("user_id", user?.id);
-
+                formData.append("user_id", parseInt(user?.id, 10));
+                console.log("User ID envoyé au backend :", parseInt(user?.id, 10));
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/projects`,
                     formData, // Envoyez formData

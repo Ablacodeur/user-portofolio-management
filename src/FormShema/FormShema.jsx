@@ -12,12 +12,14 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, setprojectList, setTheProject } from '../store/user-project/project-slice';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 export default function FormShema({ id}) {
 
     const dispatch = useDispatch();
     const projectList = useSelector((store) => store.PROJECT.projectList);
     const theProject = useSelector((store) => store.PROJECT.theProject);    
     const user = useSelector((state) => state.USER?.user);
+    const navigate = useNavigate();
     
             useEffect(() => {
                 if (id !== null) {
@@ -67,20 +69,19 @@ export default function FormShema({ id}) {
             }
             async function handleDelete(projectId) {
                 if (window.confirm("Do you really want to delete this project")) {
-                    try {
-                        await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${projectId}`);
-                        
-                        dispatch(deleteProject(projectId)); 
-                        // setReload(true);
-                        // setOpen(false);
-                        // setGlobalAlert('delete');
-                    } catch (error) {
-                        console.error("Erreur lors de la suppression de la tâche :", error);
-                    }
+                  try {
+                    await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${projectId}`);
+                    dispatch(deleteProject(projectId));
+                    
+                    console.log("Projet supprimé avec succès !");
+                    console.log("Liste des projets mise à jour :", projectList); // Ajoutez ce log
+                    
+                    navigate('/projectsetting');
+                  } catch (error) {
+                    console.error("Erreur lors de la suppression du projet :", error);
+                  }
                 }
-              }
-          
-  
+              }                          
   return (
     <div>
             <form
@@ -95,7 +96,7 @@ export default function FormShema({ id}) {
                 }
 
                 // Ajoutez l'ID utilisateur
-                formData.append("user_id", user?.id);
+                formData.append("user_id", parseInt(user?.id, 10));
 
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/projects`,
