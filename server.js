@@ -217,11 +217,7 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
   }
   // Convertir `user_id` en entier
   const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
-  if (isNaN(userId)) {
-    console.error("Erreur : user_id n'est pas un entier valide :", user_id);
-    return res.status(400).json({ error: "ID utilisateur invalide." });
-  }
-
+  console.log("ID de l'utilisateur connecté (entier) :", userId);
   try {
     // Vérifiez si un projet avec le même nom existe déjà
     const existingName = await pool.query("SELECT * FROM project WHERE project_name = $1", [project_name]);
@@ -245,7 +241,7 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
       `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id) 
        VALUES ($1, $2, $3, $4, $5, $6)        
        RETURNING *`,
-      [project_name, demo_url, repo_url, description, project_image, user_id]
+      [project_name, demo_url, repo_url, description, project_image, userId]
     );
 
     console.log("Nouveau projet ajouté :", newProject.rows[0]);

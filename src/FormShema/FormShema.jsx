@@ -85,40 +85,64 @@ export default function FormShema({ id}) {
   return (
     <div>
             <form
-            onSubmit={async (e) => {
+              onSubmit={async (e) => {
                 e.preventDefault(); // Empêche le rafraîchissement de la page
                 try {
-                const formData = new FormData();
+                  const formData = new FormData();
 
-                // Ajoutez toutes les propriétés de theProject à formData
-                for (const key in theProject) {
+                  // Ajoutez toutes les propriétés de theProject à formData
+                  for (const key in theProject) {
                     formData.append(key, theProject[key]);
-                }
+                  }
 
-                // Ajoutez l'ID utilisateur
-                formData.append("user_id", parseInt(user?.id, 10));
+                  // Ajoutez l'ID utilisateur
+                  formData.append("user_id", parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10));
+                  let response;
 
-                const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/projects`,
-                    formData, // Envoyez formData
-                    {
-                    withCredentials: true, // Inclure les cookies pour la session
-                    headers: {
-                        "Content-Type": "multipart/form-data", // Spécifiez le type multipart
-                    },
-                    }
-                );
+                  if (id) {
+                    // Si un ID est fourni, effectuez une mise à jour
+                    response = await axios.put(
+                      `${import.meta.env.VITE_API_URL}/projects/${id}`,
+                      formData, // Envoyez formData
+                      {
+                        withCredentials: true, // Inclure les cookies pour la session
+                        headers: {
+                          "Content-Type": "multipart/form-data", // Spécifiez le type multipart
+                        },
+                      }
+                    );
 
-                console.log("Tâche soumise avec succès :", response.data);
+                    console.log("Projet mis à jour avec succès :", response.data);
 
-                // Mettre à jour la liste des projets dans le store Redux
-                dispatch(setprojectList([...projectList, response.data]));
-                dispatch(setTheProject(response.data));
+                    // Mettre à jour le projet dans le store Redux
+                    dispatch(updateProject(response.data));
+                  } else {
+                    // Sinon, créez un nouveau projet
+                    response = await axios.post(
+                      `${import.meta.env.VITE_API_URL}/projects`,
+                      formData, // Envoyez formData
+                      {
+                        withCredentials: true, // Inclure les cookies pour la session
+                        headers: {
+                          "Content-Type": "multipart/form-data", // Spécifiez le type multipart
+                        },
+                      }
+                    );
+
+                    console.log("Nouveau projet ajouté avec succès :", response.data);
+
+                    // Ajouter le nouveau projet dans le store Redux
+                    dispatch(setprojectList([...projectList, response.data]));
+                  }
+
+                  // Réinitialisez le formulaire ou redirigez l'utilisateur
+                  dispatch(setTheProject({})); // Réinitialise le formulaire
+                  navigate("/projectsetting"); // Redirige vers la page des paramètres du projet
                 } catch (error) {
-                console.error("Erreur lors de la soumission :", error);
+                  console.error("Erreur lors de la soumission :", error);
                 }
-            }}
-            >            
+              }}
+            >
             <FormControl
             sx={{
                 display: 'flex',

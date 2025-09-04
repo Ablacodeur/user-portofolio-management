@@ -70,7 +70,7 @@ export default function ProfileSetting() {
                         formData.append(key, theProfil[key]);
                     }  
                     // Ajoutez l'ID utilisateur
-                    formData.append("user_id", user?.id);
+                    formData.append("user_id", parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10));
                     console.log('user-id:', user?.id);
 
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/profil`,formData);
