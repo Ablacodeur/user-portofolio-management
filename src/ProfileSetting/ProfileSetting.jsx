@@ -118,7 +118,6 @@ export default function ProfileSetting() {
                 width: { xs: '100%', sm: '100%', md: '100%' },
                 borderRadius: '10px',
                 padding: '20px',
-                backgroundColor: 'white',
                 border: '1px solid #ccc',
                 boxShadow:'0px 0.2px 0px #ccc',
                 height: '25vh',
@@ -184,7 +183,6 @@ export default function ProfileSetting() {
                     component="span" 
                     sx={{
                         backgroundColor: '#ffffff',
-                        color: 'white',
                         padding: '0px',
                         borderRadius: '5px',
                         fontWeight: 'bold',
