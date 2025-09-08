@@ -1,6 +1,6 @@
 import { Avatar, Box, Dropdown, Menu, MenuButton, MenuItem, Stack, Typography } from '@mui/joy'
 import React from 'react'
-import logo from './../assets/resources/logo.svg'
+import logo from './../assets/resources/Logo.svg'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined';
 import AirplayOutlinedIcon from '@mui/icons-material/AirplayOutlined';

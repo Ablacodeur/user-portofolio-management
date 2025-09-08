@@ -2,7 +2,7 @@ import { Box, Button, FormControl, Input, Stack, Typography } from '@mui/joy'
 import React from 'react'
 import image from '../assets/resources/login-bg.png'
 import s from './style.module.css'
-import logo from './../assets/resources/logo.svg'
+import logo from './../assets/resources/Logo.svg'
 import githubIcon from './../assets/resources/github.svg'
 export default function ForgetPass() {
   return (
