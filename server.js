@@ -224,7 +224,7 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
     const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
     if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
-      // Mettre à jour le profil existant
+      // Mettre à jour le project existant
       const updatedProject = await pool.query(
         `UPDATE project 
          SET demo_url = $1, description = $2, project_image = COALESCE($3, project_image) , repo_url = $5

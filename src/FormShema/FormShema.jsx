@@ -97,47 +97,23 @@ export default function FormShema({ id}) {
 
                   // Ajoutez l'ID utilisateur
                   formData.append("user_id", parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10));
-                  let response;
 
-                  if (id) {
-                    // Si un ID est fourni, effectuez une mise à jour
-                    response = await axios.put(
-                      `${import.meta.env.VITE_API_URL}/projects/${id}`,
-                      formData, // Envoyez formData
-                      {
-                        withCredentials: true, // Inclure les cookies pour la session
-                        headers: {
-                          "Content-Type": "multipart/form-data", // Spécifiez le type multipart
-                        },
-                      }
-                    );
+                const response = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/projects`,
+                    formData, // Envoyez formData
+                    {
+                    withCredentials: true, // Inclure les cookies pour la session
+                    headers: {
+                        "Content-Type": "multipart/form-data", // Spécifiez le type multipart
+                    },
+                    }
+                );
 
-                    console.log("Projet mis à jour avec succès :", response.data);
+                console.log("Tâche soumise avec succès :", response.data);
 
-                    // Mettre à jour le projet dans le store Redux
-                    dispatch(updateProject(response.data));
-                  } else {
-                    // Sinon, créez un nouveau projet
-                    response = await axios.post(
-                      `${import.meta.env.VITE_API_URL}/projects`,
-                      formData, // Envoyez formData
-                      {
-                        withCredentials: true, // Inclure les cookies pour la session
-                        headers: {
-                          "Content-Type": "multipart/form-data", // Spécifiez le type multipart
-                        },
-                      }
-                    );
-
-                    console.log("Nouveau projet ajouté avec succès :", response.data);
-
-                    // Ajouter le nouveau projet dans le store Redux
-                    dispatch(setprojectList([...projectList, response.data]));
-                  }
 
                   // Réinitialisez le formulaire ou redirigez l'utilisateur
-                  dispatch(setTheProject({})); // Réinitialise le formulaire
-                  navigate("/projectsetting"); // Redirige vers la page des paramètres du projet
+                  navigate("/portofolio"); // Redirige vers la page des paramètres du projet
                 } catch (error) {
                   console.error("Erreur lors de la soumission :", error);
                 }
