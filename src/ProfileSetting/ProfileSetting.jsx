@@ -120,7 +120,6 @@ export default function ProfileSetting() {
                 padding: '20px',
                 backgroundColor: 'white',
                 border: '1px solid #ccc',
-                height: 'auto',
                 boxShadow:'0px 0.2px 0px #ccc',
                 height: '25vh',
                 backgroundColor:'#E3E8EF'
