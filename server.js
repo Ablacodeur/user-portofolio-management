@@ -3,7 +3,6 @@ dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env' : '.env.loc
 import express from "express";
 import cors from "cors";
 import pkg from "pg"; 
-const { Pool } = pkg; 
 import bcrypt from 'bcrypt';
 import session from "express-session";
 import passport from "passport";
@@ -25,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://project-list-inky.vercel.app'], // Frontend local et déployé
+  origin: ['http://localhost:5173', 'user-portofolio-management.vercel.app'], // Frontend local et déployé
   credentials: true, // Autoriser les cookies et les sessions
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
@@ -102,12 +101,11 @@ app.get("/me", (req, res) => {
 });
 
 // Connexion PostgreSQL
+import pkg from 'pg';
+const { Pool } = pkg;
+
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
+  connectionString: process.env.DATABASE_URL || undefined,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
