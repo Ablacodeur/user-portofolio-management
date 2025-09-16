@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'user-portofolio-management.vercel.app'], // Frontend local et déployé
+  origin: ['http://localhost:5173', 'https://user-portofolio-management.vercel.app'], // Frontend local et déployé
   credentials: true, // Autoriser les cookies et les sessions
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
