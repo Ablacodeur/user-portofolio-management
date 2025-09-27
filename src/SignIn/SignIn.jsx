@@ -22,6 +22,7 @@ export default function SignIn() {
                 ...login,
                 [e.target.name]: e.target.value
             })
+            console.log(login)
         }
 
       
@@ -73,6 +74,7 @@ export default function SignIn() {
                 e.preventDefault(); 
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`,login);
+                    console.log("VITE_API_URL :", import.meta.env.VITE_API_URL);
                     console.log('Connecte avec succès :', response.data.user);
                     dispatch(setUser(response.data.user));
                     navigate("/portofolio");

@@ -18,7 +18,7 @@ const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+console.log("Variables d'environnement :", process.env);
 
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
@@ -107,7 +107,14 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || undefined,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
-
+console.log("DATABASE_URL :", process.env.DATABASE_URL);
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("Erreur de connexion à la base de données :", err);
+  } else {
+    console.log("Connexion réussie :", res.rows);
+  }
+});
 // ✅ Routes for the registration/
 
 app.post("/register", async (req, res) => {
