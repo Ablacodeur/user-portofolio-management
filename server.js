@@ -107,14 +107,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || undefined,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
-console.log("DATABASE_URL :", process.env.DATABASE_URL);
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    console.error("Erreur de connexion à la base de données :", err);
-  } else {
-    console.log("Connexion réussie :", res.rows);
-  }
-});
 // ✅ Routes for the registration/
 
 app.post("/register", async (req, res) => {
