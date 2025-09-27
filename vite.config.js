@@ -9,4 +9,7 @@ export default defineConfig({
       '/uploads': 'http://localhost:5000', // Redirige les requêtes vers le backend
     },
   },
+  define: {
+    'import.meta.env': process.env, // Charge les variables d'environnement
+  },
 })
