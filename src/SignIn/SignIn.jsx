@@ -70,21 +70,29 @@ export default function SignIn() {
                     </a>           
             </Box>  
             <form
-              onSubmit={async (e) => {
-                e.preventDefault(); 
-                try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/signin`,login);
-                    console.log("VITE_API_URL :", import.meta.env.VITE_API_URL);
-
-                    console.log('Connecte avec succès :', response.data.user);
-                    dispatch(setUser(response.data.user));
-                    navigate("/portofolio");
-                  } catch (error) {
-                    console.error('Erreur lors de la cconnection :', error);
-                  }
-                }}
-                style={{ width:'60%' }}
-            >
+                    onSubmit={async (e) => {
+                        e.preventDefault(); 
+                        try {
+                        const response = await axios.post(
+                            `${import.meta.env.VITE_API_URL}/signin`,
+                            login,
+                            {
+                            headers: {
+                                'Content-Type': 'application/json', // Spécifie le type de contenu
+                            },
+                            withCredentials: true, // Nécessaire pour les cookies de session
+                            }
+                        );
+                        console.log("VITE_API_URL :", import.meta.env.VITE_API_URL);
+                        console.log('Connecté avec succès :', response.data.user);
+                        dispatch(setUser(response.data.user));
+                        navigate("/portofolio");
+                        } catch (error) {
+                        console.error('Erreur lors de la connexion :', error);
+                        }
+                    }}
+                    style={{ width: '60%' }}
+            >            
                 <FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
                    {/* Ligne  */}
                     <Box sx={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
