@@ -26,7 +26,7 @@ console.log("Variables d'environnement :", process.env);
 const corsOptions = {
   origin: [
     'http://localhost:5173', // Frontend local
-    // 'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
+    'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
     'https://user-portofolio-management-production.up.railway.app', // Frontend sur Railway
   ],
   credentials: true, // Autoriser les cookies et les sessions
