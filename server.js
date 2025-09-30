@@ -24,7 +24,11 @@ console.log("Variables d'environnement :", process.env);
 
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://user-portofolio-management.vercel.app'], // Frontend local et déployé
+  origin: [
+    'http://localhost:5173', // Frontend local
+    // 'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
+    'https://user-portofolio-management-production.up.railway.app', // Frontend sur Railway
+  ],
   credentials: true, // Autoriser les cookies et les sessions
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
@@ -32,6 +36,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  console.log(`Requête reçue : ${req.method} ${req.url}`);
+  console.log(`Origine de la requête : ${req.headers.origin}`);
+  next();
+});
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -40,7 +49,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 jour
     httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
-    secure: false, // Utiliser HTTPS en production
+    secure: process.env.NODE_ENV === 'production', // Utiliser HTTPS en production
   },
 }));
 
@@ -60,12 +69,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   },
 }));
 
-
 app.get("/portofolio", (req, res) => {
   console.log(req.user);
 
   if (req.isAuthenticated()) {
-    res.redirect("http://localhost:5173/portofolio");
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; 
+    res.redirect(`${frontendUrl}/portofolio`);
   } else {
     res.status(401).send("Vous n'êtes pas connecté");
   }
@@ -86,11 +95,11 @@ app.get(
         console.error("Erreur lors de la sauvegarde de la session :", err);
         return res.status(500).send("Erreur serveur");
       }
-      res.redirect("http://localhost:5173/portofolio");
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; // Utilise une variable d'environnement ou une valeur par défaut
+      res.redirect(`${frontendUrl}/portofolio`);
     });
   }
-);
-app.get("/me", (req, res) => {
+);app.get("/me", (req, res) => {
   console.log("Requête reçue pour /me :", req.user);
   console.log("Session actuelle :", req.session);
   if (req.isAuthenticated()) {
