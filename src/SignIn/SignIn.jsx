@@ -71,29 +71,36 @@ export default function SignIn() {
             </Box>  
             <form
                     onSubmit={async (e) => {
-                        e.preventDefault(); 
+                        e.preventDefault();
                         try {
                         const response = await axios.post(
                             `${import.meta.env.VITE_API_URL}/signin`,
                             login,
                             {
                             headers: {
-                                'Content-Type': 'application/json', // Spécifie le type de contenu
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
                             },
-                            withCredentials: true, // Nécessaire pour les cookies de session
+                            withCredentials: true,
                             }
                         );
                         console.log("VITE_API_URL :", import.meta.env.VITE_API_URL);
                         console.log('Connecté avec succès :', response.data.user);
-                        dispatch(setUser(response.data.user));
-                        navigate("/portofolio");
+
+                        // Vérifiez si la réponse contient l'utilisateur avant de naviguer
+                        if (response.data && response.data.user) {
+                            dispatch(setUser(response.data.user));
+                            navigate("/portofolio");
+                        } else {
+                            console.error("Erreur : utilisateur non trouvé dans la réponse.");
+                        }
                         } catch (error) {
                         console.error('Erreur lors de la connexion :', error);
                         }
                     }}
                     style={{ width: '60%' }}
-            >            
-                <FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
+             >                
+<FormControl sx={{ gap:'10px', width:{xs:'100%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
                    {/* Ligne  */}
                     <Box sx={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
                         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></Box>

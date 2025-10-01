@@ -12,14 +12,15 @@ import fetch from "node-fetch";
 import multer from "multer";
 import path from "path";
 
-const app = express();
-const saltRounds = 10;
-const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 console.log("Variables d'environnement :", process.env);
 
+
+const app = express();
+const saltRounds = 10;
+const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
 
@@ -29,11 +30,13 @@ const corsOptions = {
     'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
   ],
   credentials: true, // Autoriser les cookies et les sessions
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Méthodes HTTP autorisées
   allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
 };
 
 app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
+
 
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
@@ -49,6 +52,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24, // 1 jour
     httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
     secure: process.env.NODE_ENV === 'production', // Utiliser HTTPS en production
+    sameSite: "none" 
   },
 }));
 
