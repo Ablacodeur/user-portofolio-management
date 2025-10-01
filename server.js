@@ -37,7 +37,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
-
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   console.log(`Origine de la requête : ${req.headers.origin}`);
@@ -374,7 +373,10 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/auth/github/callback",
+      callbackURL: process.env.NODE_ENV === 'production' 
+    ? "https://user-portofolio-management-production.up.railway.app/auth/github/callback"
+    : "http://localhost:5000/auth/github/callback"
+
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
