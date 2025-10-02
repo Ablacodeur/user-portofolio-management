@@ -38,6 +38,21 @@ app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
 app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    const origin = req.headers.origin;
+    if (corsOptions.origin.includes(origin)) {
+      res.header("Access-Control-Allow-Origin", origin);
+      res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
+      res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+      res.header("Access-Control-Allow-Credentials", "true");
+    }
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
+app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   console.log(`Origine de la requête : ${req.headers.origin}`);
   next();
