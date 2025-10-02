@@ -11,6 +11,7 @@ import GitHubStrategy from "passport-github2";
 import fetch from "node-fetch";
 import multer from "multer";
 import path from "path";
+import { fileURLToPath } from 'url';
 
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
@@ -60,7 +61,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-import { fileURLToPath } from 'url';
 
 
 // Configuration pour servir les fichiers statiques
