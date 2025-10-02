@@ -25,19 +25,23 @@ export default function PortofolioPage() {
         const[page, setPage] = useState('portofolio');
         const navigate = useNavigate();
 
-        const imagePath = profile?.profil_image?.startsWith('/uploads/')
-        ? profile.profil_image
-        : `/uploads/${profile.profil_image}`;
-    
+        const imagePath = profile?.profil_image
+        ? `${import.meta.env.VITE_API_URL}${profile.profil_image}`
+        : null;
+          
         useEffect(() => {
               const fetchData = async () => {
                 try {
-                  const profil_response = await axios.get(`${import.meta.env.VITE_API_URL}/getprofil?user_id=${userID}` );
-                  const projects_response = await axios.get(`${import.meta.env.VITE_API_URL}/getproject?user_id=${userID}` );
+                  const profil_response = await axios.get(`${import.meta.env.VITE_API_URL}/getprofil?user_id=${userID}`,
+                    { withCredentials: true } );
+                  const projects_response = await axios.get(`${import.meta.env.VITE_API_URL}/getproject?user_id=${userID}`,
+                    { withCredentials: true } );
 
                   // console.log("Liste des profils récupérée :", profil_response.data[0]);
-                  dispatch(setTheProfil(profil_response.data[0]));
-                  dispatch(setprofilList(profil_response.data));
+                  if (profil_response.data.length > 0) {
+                    dispatch(setTheProfil(profil_response.data[0]));
+                    dispatch(setprofilList(profil_response.data));
+                  }
                   dispatch(setprojectList(projects_response.data));
                   // console.log("Liste des projets du store Redux :", projects_response.data);
                 } catch (err) {

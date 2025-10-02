@@ -26,30 +26,17 @@ const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images
 
 const corsOptions = {
   origin: [
-    'http://localhost:5173', // Frontend local
-    'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
+    "http://localhost:5173",
+    process.env.FRONTEND_URL
   ],
-  credentials: true, // Autoriser les cookies et les sessions
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Méthodes HTTP autorisées
-  allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 };
 
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
-app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    const origin = req.headers.origin;
-    if (corsOptions.origin.includes(origin)) {
-      res.header("Access-Control-Allow-Origin", origin);
-      res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
-      res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
-      res.header("Access-Control-Allow-Credentials", "true");
-    }
-    return res.sendStatus(200);
-  }
-  next();
-});
 
 
 app.use((req, res, next) => {
