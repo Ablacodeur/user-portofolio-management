@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 jour
     httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
