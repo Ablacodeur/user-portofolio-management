@@ -86,7 +86,7 @@ export default function SignIn() {
                         );
                         console.log("VITE_API_URL :", import.meta.env.VITE_API_URL);
                         console.log('Connecté avec succès :', response.data.user);
-
+                        console.log(document.cookie)
                         // Vérifiez si la réponse contient l'utilisateur avant de naviguer
                         if (response.data && response.data.user) {
                             dispatch(setUser(response.data.user));
