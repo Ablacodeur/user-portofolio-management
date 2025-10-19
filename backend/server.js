@@ -122,6 +122,12 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || undefined,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
+
+// Test de connexion (optionnel )
+pool.connect()
+  .then(() => console.log("✅ Connected to PostgreSQL database"))
+  .catch(err => console.error("❌ PostgreSQL connection error:", err));
+
 // ✅ Routes for the registration/
 
 app.post("/register", async (req, res) => {
