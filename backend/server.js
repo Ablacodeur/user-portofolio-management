@@ -119,8 +119,10 @@ app.get(
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || undefined,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Test de connexion (optionnel )
