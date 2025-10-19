@@ -25,20 +25,21 @@ const saltRounds = 10;
 const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://user-portofolio-management.vercel.app"
+];
 
-const corsOptions = {
-  origin: [
-    'http://localhost:5173', // Frontend local
-    'https://user-portofolio-management.vercel.app', // Frontend sur Vercel
-  ],
-  credentials: true, // Autoriser les cookies et les sessions
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Méthodes HTTP autorisées
-  allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
-};
-
-
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
