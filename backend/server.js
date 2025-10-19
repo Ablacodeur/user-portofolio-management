@@ -118,11 +118,11 @@ app.get(
 // Connexion PostgreSQL
 const { Pool } = pkg;
 
+const isLocal = process.env.DATABASE_URL?.includes("localhost");
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: isLocal ? false : { rejectUnauthorized: false }
 });
 
 // Test de connexion (optionnel )
