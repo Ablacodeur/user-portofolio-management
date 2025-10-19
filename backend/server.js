@@ -3,7 +3,7 @@ dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env' : '.env.loc
 import express from "express";
 import cors from "cors";
 import pkg from "pg"; 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
