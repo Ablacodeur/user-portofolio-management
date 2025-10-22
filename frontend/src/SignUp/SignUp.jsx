@@ -71,7 +71,17 @@ export default function SignUp() {
               onSubmit={async (e) => {
                 e.preventDefault(); 
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,login);
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`,
+                    login,
+                        {
+                            headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                            },
+                            withCredentials: true,
+                        }
+                    )
+                    ;
                     console.log('Tâche soumise avec succès :', response.data);
                     navigate("/signin");
                   } catch (error) {

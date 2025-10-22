@@ -5,7 +5,7 @@ export function SearchBar({ placeholder = "🔍 Search by name ...", onTextChang
   return (
     <Box 
       className={s.container} 
-      sx={{ width: { xs: '100%', sm: '185px',md:'60%' } }}
+      sx={{ width: { xs: '100%'} }}
     >
       <input
         type="text"
