@@ -32,11 +32,12 @@ export default function SignUp() {
             
             <Box sx={{ 
                 width:'35%',
-                height:'90vh',
+                height:'100vh',
                 backgroundImage: `url(${image})`,
-                backgroundSize:'contain',  
+                backgroundSize: 'cover',  
                 backgroundRepeat: 'no-repeat',
                 display: { xs: 'none', sm:'none', lg: 'flex' },
+                borderRadius:'15px',
                 flexDirection:'column',
                 gap:'10px',
                 padding: '15px 10px',

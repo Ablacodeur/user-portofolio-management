@@ -112,63 +112,77 @@ export default function Browser() {
       <NavBar />
 
       <Box sx={{ marginTop: "100px", textAlign: "center", height: "90vh" }}>
-        <Typography ref={titleRef} variant="h1">Your masterpieces ... all together</Typography>
+        <Typography
+          ref={titleRef}
+          variant="h1"
+          sx={{
+            fontSize: {
+              xs: '1.7rem', 
+              sm: '3rem', 
+              md: '4rem', 
+              lg: '6rem',
+            },
+            textAlign: 'center',
+          }}
+        >
+          Your masterpieces ... all together
+        </Typography>      
       </Box>
-
-
-      <Box //box des images 
+      <Box
         sx={{
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
-          minHeight: "300px", 
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "300px",
+          overflow: "hidden", // empêche les images de dépasser l’écran
         }}
       >
-      <Box
-        ref={imageContainerRef}
-        sx={{
-          position: "relative", 
-          width: "100%", 
-          height: "80vh",
-          marginBottom: "10vh",
-        }}
-      >         
-            <Box
-              component="img"
-              ref={image1Ref}
-              src={showcase1}
-              alt="image 1"
-              sx={{
+        <Box
+          ref={imageContainerRef}
+          sx={{
+            position: "relative",
+            width: "100%",
+            maxWidth: "100vw", // limite à la largeur de l’écran
+            height: { xs: "50vh", md: "100vh" }, // adapte la hauteur selon l’écran
+            marginBottom: "10vh",
+          }}
+        >
+          <Box
+            component="img"
+            ref={image1Ref}
+            src={showcase1}
+            alt="image 1"
+            sx={{
               position: "absolute",
-              top: "20%", 
-              bottom: "50%", 
-              left: "50%", 
-              transform: "translate(50%, -50%)", 
-              width: "400px",
-              height: "400px",
-              borderRadius: "20%", 
+              top: "20%",
+              left: "50%",
+              transform: "translateX(50%) translateY(-50%)",
+              width: { xs: "150px", sm: "250px", md: "300px" }, // responsive
+              height: { xs: "150px", sm: "250px", md: "300px" },
+              borderRadius: "20%",
+              maxWidth: "90vw", // empêche de dépasser
             }}
-              />
-              <Box
-                  component="img"
-                  ref={image2Ref}
-                  src={showcase2}
-                  alt="image 2"
-                  sx={{
-                  position: "absolute",
-                  top: "20%", 
-                  bottom: "50%", 
-
-                  left: "50%", 
-                  transform: "translate(-150%, -50%)", 
-                  width: "400px",
-                  height: "400px",
-                  borderRadius: "20%", 
-                  }}
-                />
-
+          />
+          <Box
+            component="img"
+            ref={image2Ref}
+            src={showcase2}
+            alt="image 2"
+            sx={{
+              position: "absolute",
+              top: "20%",
+              left: "50%",
+              transform: "translateX(-150%) translateY(-50%)",
+              width: { xs: "150px", sm: "250px", md: "300px" },
+              height: { xs: "150px", sm: "250px", md: "300px" },
+              borderRadius: "20%",
+              maxWidth: "90vw",
+            }}
+          />
+        </Box>
       </Box>
-      </Box>
+
+
       <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
       <Typography
         ref={typingTextRef}
@@ -182,7 +196,7 @@ export default function Browser() {
       '150px'}}>
         <FilterBar/>
       </Box>
-      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center',alignItems: 'center',backgroundColor:'#e2e3e3'  }}>
+      <Box sx={{ maxWidth: '100vw', overflowY:'hidden', display: 'flex', justifyContent: 'center',alignItems: 'center',backgroundColor:'#e2e3e3'  }}>
         <SlideSection />
       </Box>
       <Footer />

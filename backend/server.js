@@ -41,6 +41,10 @@ app.use(cors({
   credentials: true,
 }));
 
+
+
+
+
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   console.log(`Origine de la requête : ${req.headers.origin}`);
@@ -50,12 +54,13 @@ app.use((req, res, next) => {
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 jour
     httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
     secure: process.env.NODE_ENV === 'production', // Utiliser HTTPS en production
-    sameSite: "none" 
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+
   },
 }));
 
@@ -118,15 +123,13 @@ app.get(
 // Connexion PostgreSQL
 const { Pool } = pkg;
 
+const isLocal = process.env.DATABASE_URL?.includes("localhost");
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false
-  }
+  ssl: isLocal ? false : { rejectUnauthorized: false }
 });
 
-// Test de connexion (optionnel )
 pool.connect()
   .then(() => console.log("✅ Connected to PostgreSQL database"))
   .catch(err => console.error("❌ PostgreSQL connection error:", err));
