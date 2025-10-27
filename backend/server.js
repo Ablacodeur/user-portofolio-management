@@ -55,13 +55,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 1 jour
-    httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
-    secure: process.env.NODE_ENV === 'production', // Utiliser HTTPS en production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-
-  },
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 jour
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      domain: '.railway.app' 
+    },
 }));
 
 app.use(passport.initialize());
@@ -110,15 +110,19 @@ app.get(
       res.redirect(`${frontendUrl}/portofolio`);
     });
   }
-);app.get("/me", (req, res) => {
-  console.log("Requête reçue pour /me :", req.user);
-  console.log("Session actuelle :", req.session);
+);
+
+
+app.get("/me", (req, res) => {
+  console.log("🍪 Session ID :", req.sessionID);
+  console.log("🔐 Utilisateur :", req.user);
   if (req.isAuthenticated()) {
     return res.status(200).json(req.user);
   } else {
     return res.status(401).json({ message: "Non authentifié" });
   }
 });
+
 
 // Connexion PostgreSQL
 const { Pool } = pkg;
