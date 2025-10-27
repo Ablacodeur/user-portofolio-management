@@ -60,8 +60,11 @@ export default function SignUp() {
             <img src={logo} alt="logo" style={{ height:'30px' }} />                    
                     <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
                     <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'},marginTop:'20px' }}>Enter the fields below to get started</Typography>
-                    <a href="http://localhost:5000/auth/github" style={{ textDecoration: 'none' }}>
-            <Button sx={{ backgroundColor: '#20293A', marginTop: '20px' }}>
+                        <a 
+                        href={`${import.meta.env.VITE_API_URL}/auth/github`}
+                        style={{ textDecoration: 'none' }}
+                        >            
+                        <Button sx={{ backgroundColor: '#20293A', marginTop: '20px' }}>
                 <img src={githubIcon} alt="github" style={{ height: '20px', marginRight: '10px' }} />
                 <Typography sx={{ color: 'white', fontSize: 'small' }}>Sign in with Github</Typography>
             </Button>
