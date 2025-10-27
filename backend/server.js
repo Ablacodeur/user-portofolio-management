@@ -55,13 +55,14 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 jour
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      domain: '.railway.app' 
-    },
+  proxy: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 jour
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    domain: process.env.NODE_ENV === "production" ? ".up.railway.app" : undefined  
+  },
 }));
 
 app.use(passport.initialize());
@@ -106,7 +107,8 @@ app.get(
         console.error("Erreur lors de la sauvegarde de la session :", err);
         return res.status(500).send("Erreur serveur");
       }
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; // Utilise une variable d'environnement ou une valeur par défaut
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; 
+      console.log("✅ Session sauvegardée, ID :", req.sessionID);
       res.redirect(`${frontendUrl}/portofolio`);
     });
   }
