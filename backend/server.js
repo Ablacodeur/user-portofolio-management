@@ -135,17 +135,9 @@ pool.connect()
   .catch(err => console.error("❌ PostgreSQL connection error:", err));
 
 // ✅ Routes for the registration/
-
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
-  console.log("Utilisateur connecté :", req.user);
-
-  if (!req.user) {
-    return res.status(401).json({ error: "Non authentifié" });
-  }
-
-  const userId = req.user.id;
-  console.log("ID de l'utilisateur connecté :", userId)
+  console.log("Tentative d'enregistrement :", email);
 
   try {
     // Vérifier si l'utilisateur existe déjà
@@ -168,7 +160,7 @@ app.post("/register", async (req, res) => {
       );
       const user = result.rows[0];
 
-      // Connecter l'utilisateur
+      // Connecter automatiquement l'utilisateur
       req.login(user, (err) => {
         if (err) {
           console.error("Erreur lors de la connexion de l'utilisateur :", err);
@@ -178,12 +170,14 @@ app.post("/register", async (req, res) => {
         console.log("Création réussie et utilisateur connecté");
         return res.status(201).json({ message: "User registered and logged in successfully", user });
       });
-      });
-      } catch (error) {
-        console.error("Erreur lors de l'enregistrement :", error);
-        return res.status(500).json({ message: "Erreur serveur." });
-      }
-  });
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+});
+
+  
 // ✅ Routes for the logging
 app.post("/signin", (req, res, next) => {
   console.log("Requête reçue pour /signin :", req.body);

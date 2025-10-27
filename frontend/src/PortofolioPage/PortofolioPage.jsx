@@ -51,28 +51,28 @@ export default function PortofolioPage() {
           
               fetchData();
             }, []);
+            
             useEffect(() => {
-              const fetchUser = async () => {
-                if (user && user.password) {
-                  console.log("Utilisateur déjà défini :", user);
-                  return; // Ne pas remplacer l'utilisateur existant
-                }
-            
-                try {
-                  const response = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
-                    withCredentials: true, // Inclure les cookies de session
-                  });
-                  console.log("Utilisateur récupéré après GitHub :", response.data);
-                  dispatch(setUser(response.data)); // Met à jour le store Redux
-                } catch (error) {
-                  console.error("Erreur lors de la récupération de l'utilisateur :", error);
-                  dispatch(setError("Non authentifié"));
-                }
-              };
-            
-              fetchUser();
-            }, [dispatch, user]);    
-        
+            const fetchUser = async () => {
+              // Si on a déjà un user.id, on ne relance pas
+              if (user && user.id) return;
+
+              try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
+                  withCredentials: true,
+                });
+                console.log("Utilisateur récupéré après GitHub :", response.data);
+                dispatch(setUser(response.data));
+              } catch (error) {
+                console.error("Erreur lors de la récupération de l'utilisateur :", error);
+                dispatch(setError("Non authentifié"));
+              }
+            };
+
+            fetchUser();
+            // dépend uniquement du dispatch (qui est stable)
+          }, [dispatch]);
+
     return (
       <Box sx={{ position:'relative'}}>
         <Box
