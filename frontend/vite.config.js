@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/uploads': 'http://localhost:5000', // Redirige les requêtes vers le backend
+      '/uploads': '', // Redirige les requêtes vers le backend
     },
   },
   define: {
