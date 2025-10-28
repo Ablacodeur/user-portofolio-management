@@ -21,6 +21,7 @@ console.log("Variables d'environnement :", process.env);
 
 
 const app = express();
+app.set('trust proxy', 1);
 const saltRounds = 10;
 const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
@@ -55,13 +56,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  proxy: true,
+  proxy: true, 
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 jour
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", 
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    domain: process.env.NODE_ENV === "production" ? ".up.railway.app" : undefined  
+    secure: process.env.NODE_ENV === 'production', // HTTPS only en prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   },
 }));
 
@@ -91,26 +91,44 @@ app.get("/portofolio", (req, res) => {
     res.status(401).send("Vous n'êtes pas connecté");
   }
 });
+
 // Route pour rediriger vers GitHub
-app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
+app.get(
+  "/auth/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
 
 // Route de callback après l'authentification GitHub
 app.get(
   "/auth/github/callback",
-  passport.authenticate("github", { failureRedirect: "/signin" }),
-  (req, res) => {
+  passport.authenticate("github", { failureRedirect: "/signin", session: true }),
+  async (req, res) => {
     console.log("Utilisateur authentifié via GitHub :", req.user);
 
-    // Sauvegarder explicitement la session avant de rediriger
-    req.session.save((err) => {
-      if (err) {
-        console.error("Erreur lors de la sauvegarde de la session :", err);
-        return res.status(500).send("Erreur serveur");
-      }
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; 
+    try {
+      // 🔹 Force la sauvegarde de session avant redirection
+      await new Promise((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+
       console.log("✅ Session sauvegardée, ID :", req.sessionID);
+      console.log("🔐 Cookie configuré :", req.session.cookie);
+
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
+      // 🔹 Envoie un en-tête clair pour autoriser les credentials
+      res.setHeader("Access-Control-Allow-Origin", frontendUrl);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+
+      // 🔹 Redirection finale
       res.redirect(`${frontendUrl}/portofolio`);
-    });
+    } catch (error) {
+      console.error("❌ Erreur lors de la sauvegarde de la session :", error);
+      res.status(500).json({ message: "Erreur serveur lors de l'auth GitHub" });
+    }
   }
 );
 
