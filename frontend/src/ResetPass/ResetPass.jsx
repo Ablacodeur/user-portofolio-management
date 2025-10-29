@@ -39,7 +39,7 @@ export default function ResetPass() {
                 textAlign:'center',
             }}>             
                 <FormControl sx={{ gap:'10px', width:{xs:'80%',sm:'70%',lg:'50%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
-                    <img src={logo} alt="logo" style={{ height:'30px' }} />                    
+                <Link to={"/"}> <img src={logo} alt="logo" style={{ height:'30px' }} /> </Link>                   
                     <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Choose  new password</Typography>
                     <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'} }}>Enter your new password and you’re all set.</Typography>
                     <Input placeholder='Enter password'></Input>

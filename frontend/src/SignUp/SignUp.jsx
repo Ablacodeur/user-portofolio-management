@@ -57,7 +57,7 @@ export default function SignUp() {
                 flexDirection:'column'
             }}>  
             <Box sx={{  gap:'30px' }}>
-            <img src={logo} alt="logo" style={{ height:'30px' }} />                    
+                <Link to={"/"}> <img src={logo} alt="logo" style={{ height:'30px' }} /> </Link>                   
                     <Typography variant='h1' sx={{ fontSize:{xs:'20px',md:'30px'},color:'black' }}>Create your account</Typography>
                     <Typography sx={{ color:'#7d7878',fontSize:{xs:'12px',md:'20px'},marginTop:'20px' }}>Enter the fields below to get started</Typography>
                         <a 

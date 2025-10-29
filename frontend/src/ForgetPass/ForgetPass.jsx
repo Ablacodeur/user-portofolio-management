@@ -36,7 +36,7 @@ export default function ForgetPass() {
                 textAlign:'center',
             }}>             
                 <FormControl sx={{ gap:'10px', width:{xs:'80%',sm:'70%',lg:'50%'}, padding:'20px', backgroundColor:'white', borderRadius:'10px' }}>
-                    <img src={logo} alt="logo" style={{ height:'30px' }} />                    
+                <Link to={"/"}> <img src={logo} alt="logo" style={{ height:'30px' }} /> </Link>                   
                     <Typography variant='h1' sx={{ fontSize:'30px',color:'black' }}>Forgot password</Typography>
                     <Typography sx={{ color:'#7d7878',fontSize:{xs:'10px',md:'15px'} }}>We’ll email you instructions to reset your password</Typography>
                     <Input placeholder='Enter a password'></Input>

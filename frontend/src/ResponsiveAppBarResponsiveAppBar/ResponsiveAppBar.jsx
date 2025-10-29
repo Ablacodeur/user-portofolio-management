@@ -42,7 +42,9 @@ export default function ResponsiveAppBar() {
             width: '100%', 
             
              }}>
-            <img src={logo} href="#" />
+             <Link to={"/"}>
+                <img src={logo} href="#" />
+             </Link>  
             <Box>
             <Dropdown  sx={{ position: 'relative' }} open={open} onOpenChange={handleOpenChange}>
                    
