@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, FormLabel, Input, Textarea, Typography, CircularProgress } from '@mui/joy';
 import React, { useState } from 'react';
 import ResponsiveAppBar from '../ResponsiveAppBarResponsiveAppBar/ResponsiveAppBar';
-import { FormControl, InputLabel } from '@mui/material';
+import { FormControl } from '@mui/material';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTheProfil } from '../store/user-project/profile-slice';
 import axios from 'axios';
+import imageCompression from "browser-image-compression";
 
 export default function ProfileSetting() {
   const navigate = useNavigate();
@@ -61,12 +62,29 @@ export default function ProfileSetting() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            setIsLoading(true); // ✅ active le loader
+            setIsLoading(true);
+
             try {
               const formData = new FormData();
-              for (const key in theProfil) {
-                formData.append(key, theProfil[key]);
+
+              // 🔹 Si une image est présente, on la compresse avant envoi
+              if (theProfil?.profil_image instanceof File) {
+                console.log("Compression en cours...");
+                const compressedFile = await imageCompression(theProfil.profil_image, {
+                  maxSizeMB: 0.4, // ≈ 400 Ko
+                  maxWidthOrHeight: 800,
+                  useWebWorker: true,
+                });
+                console.log("Taille avant:", (theProfil.profil_image.size / 1024 / 1024).toFixed(2), "MB");
+                console.log("Taille après:", (compressedFile.size / 1024 / 1024).toFixed(2), "MB");
+                formData.append("profil_image", compressedFile);
               }
+
+             
+              for (const key in theProfil) {
+                if (key !== "profil_image") formData.append(key, theProfil[key]);
+              }
+
               formData.append(
                 'user_id',
                 parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10)
@@ -77,13 +95,14 @@ export default function ProfileSetting() {
                 `${import.meta.env.VITE_API_URL}/profil`,
                 formData
               );
+
               console.log('new user profil :', response.data);
               dispatch(setTheProfil(response.data));
               alert('Profile updated successfully!');
             } catch (error) {
               console.error('Erreur lors de la connexion :', error);
             } finally {
-              setIsLoading(false); // ✅ désactive le loader
+              setIsLoading(false);
             }
           }}
         >
