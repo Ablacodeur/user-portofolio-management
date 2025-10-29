@@ -38,7 +38,9 @@ export default function SignIn() {
 
       if (response.data && response.data.user) {
         dispatch(setUser(response.data.user))
-        navigate("/portofolio")
+            setTimeout(() => {
+                navigate("/portofolio")
+            }, 1200)
       } else {
         console.error("Erreur : utilisateur non trouvé dans la réponse.")
       }
@@ -122,7 +124,6 @@ export default function SignIn() {
                     thickness={4}
                     size="sm"
                     sx={{ color: 'black' }}
-                    determinate value={100} 
                   />
                 ) : (
                   "Sign in"
