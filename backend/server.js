@@ -12,6 +12,8 @@ import fetch from "node-fetch";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from 'url'; 
+import fs from "fs";
+import sharp from "sharp";
 
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +27,34 @@ app.set('trust proxy', 1);
 const saltRounds = 10;
 const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
+
+// ✅ Middleware pour compresser l'image après upload
+async function compressImage(req, res, next) {
+  if (!req.file) return next(); // pas d'image
+
+  try {
+    const filePath = req.file.path;
+    const compressedPath = `uploads/compressed-${req.file.filename}.jpg`;
+
+    // 🔹 Compression avec Sharp
+    await sharp(filePath)
+      .resize(800) // redimensionne à 800px de large max (optionnel)
+      .jpeg({ quality: 70 }) // 70% de qualité
+      .toFile(compressedPath);
+
+    // Supprime l’original pour éviter d’encombrer le disque
+    fs.unlinkSync(filePath);
+
+    // Met à jour le fichier compressé dans req.file pour le reste du code
+    req.file.path = compressedPath;
+    req.file.filename = `compressed-${req.file.filename}.jpg`;
+
+    next();
+  } catch (error) {
+    console.error("Erreur de compression :", error);
+    next();
+  }
+}
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -238,7 +268,7 @@ app.get("/getproject", async (req, res) => {
     res.status(500).send("Erreur serveur lors de la récupération des tâches");
   }});
 
-app.post("/projects", upload.single("project_image"), async (req, res) => {
+app.post("/projects", upload.single("project_image"), compressImage, async (req, res) => {
   const { project_name, demo_url, repo_url, description, user_id } = req.body;
   console.log("Requête complète reçue :", req.body);
   console.log("Type de user_id :", typeof req.body.user_id);
@@ -307,7 +337,7 @@ app.get("/getprofil", async (req, res) => {
   }
 });
 
-app.post("/profil", upload.single("profil_image"), async (req, res) => {
+  app.post("/profil", upload.single("profil_image"), compressImage, async (req, res) => {  
   const { email, job, sudoname, about_you, user_id } = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
   const profil_image = req.file ? `/uploads/${req.file.filename}` : null; // URL de l'image
