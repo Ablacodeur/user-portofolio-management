@@ -121,7 +121,7 @@ export default function SignIn() {
                   <CircularProgress
                     thickness={4}
                     size="sm"
-                    sx={{ color: 'white' }}
+                    sx={{ color: 'black' }}
                     determinate value={100} 
                   />
                 ) : (
