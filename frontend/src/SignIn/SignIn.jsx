@@ -122,6 +122,7 @@ export default function SignIn() {
                     thickness={4}
                     size="sm"
                     sx={{ color: 'white' }}
+                    determinate value={100} 
                   />
                 ) : (
                   "Sign in"
