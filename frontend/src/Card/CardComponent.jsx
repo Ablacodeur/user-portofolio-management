@@ -10,8 +10,12 @@ export default function CardComponent({ project ,page }) {
   console.log(" le project :", project);
 
 
-  const imagePath = project.project_image
-  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${project.project_image.startsWith('/') ? '' : '/'}${project.project_image}`
+const raw = project?.project_image || null;
+
+const imagePath = raw
+  ? (raw.startsWith('http')
+      ? raw
+      : `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${raw.startsWith('/') ? '' : '/'}${raw}`)
   : null;
 
 console.log("Project Image Path:", imagePath); 

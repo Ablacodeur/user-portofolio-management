@@ -93,8 +93,13 @@ export default function ProfileSetting() {
 
               const response = await axios.post(
                 `${import.meta.env.VITE_API_URL}/profil`,
-                formData
+                formData,
+                {
+                  headers: { "Content-Type": "multipart/form-data" },
+                  withCredentials: true, // 🔹 garde la session active
+                }
               );
+
 
               console.log('new user profil :', response.data);
               dispatch(setTheProfil(response.data));

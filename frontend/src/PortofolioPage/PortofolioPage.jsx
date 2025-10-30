@@ -20,13 +20,15 @@ export default function PortofolioPage() {
   const [page, setPage] = useState('portofolio');
   const navigate = useNavigate();
   const [isImageLoaded, setIsImageLoaded] = useState(false); // ✅ état du chargement d’image
+  const raw = profile?.profil_image || null;
+
+
 
   // chemin complet de l'image de profil
-  const imagePath = profile?.profil_image
-    ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${
-        profile.profil_image.startsWith('/') ? '' : '/'
-      }${profile.profil_image}`
-    : null;
+  const imagePath = raw
+  ? (raw.startsWith('http') ? raw 
+     : `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${raw.startsWith('/') ? '' : '/'}${raw}`)
+  : null;
 
   useEffect(() => {
     const fetchData = async () => {

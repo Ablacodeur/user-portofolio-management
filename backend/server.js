@@ -14,18 +14,62 @@ import path from "path";
 import { fileURLToPath } from 'url'; 
 import fs from "fs";
 import sharp from "sharp";
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 console.log("Variables d'environnement :", process.env);
 
+// Configuration Cloudinary
+
+// ✅ Stockage Cloudinary pour Multer
+const cloudOK =
+  !!process.env.CLOUDINARY_CLOUD_NAME &&
+  !!process.env.CLOUDINARY_API_KEY &&
+  !!process.env.CLOUDINARY_API_SECRET;
+
+if (cloudOK) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
+
+const storage = cloudOK
+  ? new CloudinaryStorage({
+      cloudinary,
+      params: async (req, file) => {
+        // 🔹 Donne un identifiant unique pour éviter les remplacements
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+        return {
+          folder: "user-portfolio-uploads",
+          allowed_formats: ["jpg", "jpeg", "png", "webp"],
+          transformation: [{ width: 800, quality: "auto" }],
+          timestamp: Math.floor(Date.now() / 1000),
+          public_id: `${file.fieldname}-${uniqueSuffix}`, // ✅ nom unique
+        };
+      },
+    })
+  : undefined;
+
+const upload = cloudOK ? multer({ storage }) : multer({ dest: "uploads/" });
+
+// Vérification Cloudinary
+console.log("🌩️ Vérification Cloudinary :", process.env.CLOUDINARY_CLOUD_NAME);
+cloudinary.api
+  .ping()
+  .then(() => console.log("✅ Cloudinary connecté avec succès"))
+  .catch((err) => console.error("❌ Cloudinary erreur :", err?.message || err));
 
 
 const app = express();
 app.set('trust proxy', 1);
 const saltRounds = 10;
-const upload = multer({ dest: "uploads/" }); // Dossier où les fichiers  images  seront stockés
+
 // CORS : autoriser le frontend déployé sur Vercel à accéder à l'API
 
 // ✅ Middleware pour compresser l'image après upload
@@ -268,13 +312,15 @@ app.get("/getproject", async (req, res) => {
     res.status(500).send("Erreur serveur lors de la récupération des tâches");
   }});
 
-app.post("/projects", upload.single("project_image"), compressImage, async (req, res) => {
+app.post("/projects", upload.single("project_image"), async (req, res) => {
   const { project_name, demo_url, repo_url, description, user_id } = req.body;
   console.log("Requête complète reçue :", req.body);
   console.log("Type de user_id :", typeof req.body.user_id);
   console.log("Valeur brute de user_id :", req.body.user_id);
   // Vérifiez si le fichier a été correctement reçu
-  const project_image = req.file ? `/uploads/${req.file.filename}` : null; // Nom du fichier téléchargé
+  const project_image = req.file
+  ? (req.file.path || req.file.secure_url || req.file.url || null)
+  : null;
 
   // if (!project_image) {
   //   console.error("Erreur : Aucun fichier image téléchargé.");
@@ -337,10 +383,15 @@ app.get("/getprofil", async (req, res) => {
   }
 });
 
-  app.post("/profil", upload.single("profil_image"), compressImage, async (req, res) => {  
+app.post("/profil", upload.single("profil_image"), async (req, res) => {
+  console.log("📦 Headers:", req.headers['content-type']);
+console.log("🧩 Body keys:", Object.keys(req.body || {}));
+
   const { email, job, sudoname, about_you, user_id } = req.body;
   console.log("ID de l'utilisateur connecté :", user_id);
-  const profil_image = req.file ? `/uploads/${req.file.filename}` : null; // URL de l'image
+  const profil_image = req.file
+  ? (req.file.path || req.file.secure_url || req.file.url || null)
+  : null;
   console.log("Nom du fichier téléchargé :", profil_image);
 
   if (!sudoname || !about_you) {
@@ -376,6 +427,8 @@ app.get("/getprofil", async (req, res) => {
     return res.status(201).json(newProfil.rows[0]);
   } catch (error) {
     console.error("Erreur SQL :", error);
+    console.error("❌ Erreur complète route /profil :", error.message, error.stack);
+
     res.status(500).send("Erreur lors de l'ajout ou de la mise à jour du profil.");
   }
 });
@@ -519,6 +572,10 @@ app.get("/logout", (req, res) => {
       return res.status(200).json({ message: "Déconnexion réussie" });
     });
   });
+});
+app.use((err, req, res, next) => {
+  console.error("🔥 Unhandled error:", err);
+  res.status(500).json({ message: "Internal Server Error", detail: err?.message });
 });
 
 // Lancer le serveur
