@@ -16,6 +16,8 @@ import fs from "fs";
 import sharp from "sharp";
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { signUserJwt, verifyJwt, jwtRequired } from './jwt.js';
+
 
 // Convertir `import.meta.url` en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
@@ -102,18 +104,17 @@ async function compressImage(req, res, next) {
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://user-portofolio-management.vercel.app"
+  "https://user-portofolio-management.vercel.app",
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+  origin(origin, cb) {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
   },
-  credentials: true,
+  credentials: true, 
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"], // ✅ pour le JWT
 }));
 
 
@@ -175,47 +176,66 @@ app.get(
 // Route de callback après l'authentification GitHub
 app.get(
   "/auth/github/callback",
-  passport.authenticate("github", { failureRedirect: "/signin", session: true }),
+  passport.authenticate("github", { failureRedirect: "/signin", session: false }),
   async (req, res) => {
     console.log("Utilisateur authentifié via GitHub :", req.user);
+    const { signUserJwt } = await import('./auth/jwt.js'); // tu l’as déjà dans ton fichier
 
-    try {
-      // 🔹 Force la sauvegarde de session avant redirection
-      await new Promise((resolve, reject) => {
-        req.session.save((err) => {
-          if (err) return reject(err);
-          resolve();
-        });
-      });
+    const token = signUserJwt(req.user);
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
-      console.log("✅ Session sauvegardée, ID :", req.sessionID);
-      console.log("🔐 Cookie configuré :", req.session.cookie);
+    // Redirige vers ton frontend avec le token dans le hash (non visible par les serveurs)
+    res.redirect(`${frontendUrl}/auth/callback#token=${encodeURIComponent(token)}`);
 
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-
-      // 🔹 Envoie un en-tête clair pour autoriser les credentials
-      res.setHeader("Access-Control-Allow-Origin", frontendUrl);
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-
-      // 🔹 Redirection finale
-      res.redirect(`${frontendUrl}/portofolio`);
-    } catch (error) {
-      console.error("❌ Erreur lors de la sauvegarde de la session :", error);
-      res.status(500).json({ message: "Erreur serveur lors de l'auth GitHub" });
-    }
   }
 );
 
 
-app.get("/me", (req, res) => {
-  console.log("🍪 Session ID :", req.sessionID);
-  console.log("🔐 Utilisateur :", req.user);
-  if (req.isAuthenticated()) {
-    return res.status(200).json(req.user);
-  } else {
-    return res.status(401).json({ message: "Non authentifié" });
+// utils/anyAuth.js
+
+export function anyAuth(req, res, next) {
+  const auth = req.headers.authorization || '';
+  const [scheme, token] = auth.split(' ');
+
+  if (scheme === 'Bearer' && token) {
+    try {
+      const decoded = verifyJwt(token); // { id, email }
+      req.user = decoded;
+      req.authMode = 'jwt';
+      return next();
+    } catch {
+      // token invalide → on ne bloque pas ici, on tente la session
+    }
+  }
+
+  // ➜ fallback session
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    req.authMode = 'session';
+    return next();
+  }
+
+  return res.status(401).json({ message: 'Non authentifié (JWT ou session requis)' });
+}
+
+app.get("/me", anyAuth, async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?.ID || req.user?.Id; // sécurise selon ton shape
+    const { rows } = await pool.query("SELECT * FROM connection WHERE id=$1", [userId]);
+    if (!rows.length) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    const user = rows[0];
+    res.json({
+      id: user.id,
+      email: user.email,
+      profil_image: user.profil_image ?? null,
+      authMode: req.authMode, // 'jwt' ou 'session' (utile pour debug)
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
+
 
 
 // Connexion PostgreSQL
@@ -483,6 +503,11 @@ passport.use(new Strategy( async function verify(username,  password, cb){
     }
 
 }))
+
+// auth/jwt.js (ESM)
+
+
+
 
 // Configurer la stratégie GitHub
 passport.use(
