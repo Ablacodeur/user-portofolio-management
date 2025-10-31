@@ -179,7 +179,7 @@ app.get(
   passport.authenticate("github", { failureRedirect: "/signin", session: false }),
   async (req, res) => {
     console.log("Utilisateur authentifié via GitHub :", req.user);
-    const { signUserJwt } = await import('./auth/jwt.js'); // tu l’as déjà dans ton fichier
+    const { signUserJwt } = await import('./jwt.js'); // tu l’as déjà dans ton fichier
 
     const token = signUserJwt(req.user);
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
