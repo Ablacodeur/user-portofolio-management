@@ -155,7 +155,6 @@ export default function PortofolioPage() {
           alignItems: 'flex-start',
         }}
       >
-        <p>Ceci est votre portfolio personnalisé.</p>
         <h1 style={{ fontSize: '40px' }}>
           {profile.sudoname}
           <br />

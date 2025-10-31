@@ -235,7 +235,6 @@ export default function FormShema({ id }) {
                 value={theProject?.project_name || ''}
                 onChange={setChange}
                 name="project_name"
-                disabled
                 sx={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
               />
             </Box>

@@ -333,50 +333,43 @@ app.get("/getproject", async (req, res) => {
   }});
 
 app.post("/projects", upload.single("project_image"), async (req, res) => {
-  const { project_name, demo_url, repo_url, description, user_id } = req.body;
+  const { id, project_name, demo_url, repo_url, description, user_id } = req.body;
   console.log("Requête complète reçue :", req.body);
-  console.log("Type de user_id :", typeof req.body.user_id);
-  console.log("Valeur brute de user_id :", req.body.user_id);
-  // Vérifiez si le fichier a été correctement reçu
+
   const project_image = req.file
-  ? (req.file.path || req.file.secure_url || req.file.url || null)
-  : null;
-
-  // if (!project_image) {
-  //   console.error("Erreur : Aucun fichier image téléchargé.");
-  //   return res.status(400).json({ error: "Aucun fichier image téléchargé. Veuillez ajouter une image." });
-  // }
-
-  console.log("Nom du fichier téléchargé :", project_image);
+    ? (req.file.path || req.file.secure_url || req.file.url || null)
+    : null;
 
   if (!project_name || !demo_url) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
-  // Convertir `user_id` en entier
-  const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
-  console.log("ID de l'utilisateur connecté (entier) :", userId);
-  try {
-    // Vérifiez si un projet avec le même nom existe déjà
-    const existingName = await pool.query("SELECT * FROM project WHERE project_name = $1", [project_name]);
-    const existingRepo = await pool.query("SELECT * FROM project WHERE repo_url = $1", [repo_url]);
 
-    if (existingName.rows.length > 0 && existingRepo.rows.length > 0) {
-      // Mettre à jour le project existant
+  const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
+
+  try {
+    if (id) {
+      // 🔹 Si un ID est fourni → on met à jour ce projet précis
       const updatedProject = await pool.query(
         `UPDATE project 
-         SET demo_url = $1, description = $2, project_image = COALESCE($3, project_image) , repo_url = $5
-         WHERE project_name = $4
+         SET project_name = $1, demo_url = $2, repo_url = $3, description = $4, 
+             project_image = COALESCE($5, project_image)
+         WHERE id = $6 AND user_id = $7
          RETURNING *`,
-        [demo_url, description, project_image, project_name, repo_url]
+        [project_name, demo_url, repo_url, description, project_image, id, userId]
       );
+
+      if (updatedProject.rows.length === 0) {
+        return res.status(404).json({ error: "Projet non trouvé." });
+      }
+
       console.log("Projet mis à jour :", updatedProject.rows[0]);
-      return res.status(200).json(updatedProject.rows[0]); 
+      return res.status(200).json(updatedProject.rows[0]);
     }
 
-    // Insérer un nouveau projet
+    // 🔹 Sinon, on crée un nouveau projet
     const newProject = await pool.query(
-      `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id) 
-       VALUES ($1, $2, $3, $4, $5, $6)        
+      `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
       [project_name, demo_url, repo_url, description, project_image, userId]
     );
@@ -385,7 +378,7 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
     return res.status(201).json(newProject.rows[0]);
   } catch (error) {
     console.error("Erreur SQL :", error);
-    res.status(500).send("Erreur lors de l'ajout du projet.");
+    res.status(500).send("Erreur lors de l'ajout ou la mise à jour du projet.");
   }
 });
 //profil routes
