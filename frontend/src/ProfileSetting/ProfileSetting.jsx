@@ -85,10 +85,13 @@ export default function ProfileSetting() {
                 if (key !== "profil_image") formData.append(key, theProfil[key]);
               }
 
-              formData.append(
-                'user_id',
-                parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10)
-              );
+            if (!user?.id) {
+              console.error("❌ user_id manquant !");
+              return alert("Erreur : identifiant utilisateur manquant.");
+            }
+
+              const userId = parseInt(user.id, 10);
+              formData.append('user_id', userId);
               console.log('user-id:', user?.id);
 
               const response = await axios.post(

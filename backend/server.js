@@ -398,50 +398,55 @@ app.get("/getprofil", async (req, res) => {
 
 app.post("/profil", upload.single("profil_image"), async (req, res) => {
   console.log("📦 Headers:", req.headers['content-type']);
-console.log("🧩 Body keys:", Object.keys(req.body || {}));
+  console.log("🧩 Body keys:", Object.keys(req.body || {}));
 
-  const { email, job, sudoname, about_you, user_id } = req.body;
-  console.log("ID de l'utilisateur connecté :", user_id);
+  const { email, job, sudoname, about_you } = req.body;
+  let { user_id } = req.body;
+
+  // ✅ Conversion sécurisée
+  if (Array.isArray(user_id)) user_id = user_id[0];
+  user_id = parseInt(user_id, 10);
+  if (isNaN(user_id)) {
+    return res.status(400).json({ error: "user_id invalide ou manquant" });
+  }
+
   const profil_image = req.file
-  ? (req.file.path || req.file.secure_url || req.file.url || null)
-  : null;
-  console.log("Nom du fichier téléchargé :", profil_image);
+    ? (req.file.path || req.file.secure_url || req.file.url || null)
+    : null;
 
   if (!sudoname || !about_you) {
     return res.status(400).json({ error: "Tous les champs sont obligatoires." });
   }
 
   try {
-    // Vérifiez si un profil avec le même email ou sudoname existe déjà
-    const existingSudo = await pool.query("SELECT * FROM profils WHERE sudoname = $1", [sudoname]);
-    const existingEmail = await pool.query("SELECT * FROM profils WHERE email = $1", [email]);
+    const existing = await pool.query(
+      "SELECT * FROM profils WHERE email = $1 AND user_id = $2",
+      [email, user_id]
+    );
 
-    if (existingSudo.rows.length > 0 && existingEmail.rows.length > 0) {
-      // Mettre à jour le profil existant
+    if (existing.rows.length > 0) {
       const updatedProfil = await pool.query(
         `UPDATE profils 
-         SET job = $1, about_you = $2, profil_image = $3 ,sudoname = $4
-         WHERE email = $5 
+         SET job = $1, about_you = $2, profil_image = $3, sudoname = $4
+         WHERE email = $5 AND user_id = $6
          RETURNING *`,
-        [job, about_you, profil_image, sudoname, email]
+        [job, about_you, profil_image, sudoname, email, user_id]
       );
-      console.log("Profil mis à jour :", updatedProfil.rows[0]);
+      console.log("✅ Profil mis à jour :", updatedProfil.rows[0]);
       return res.status(200).json(updatedProfil.rows[0]);
     }
 
-    // Insérer un nouveau profil si aucun n'existe
     const newProfil = await pool.query(
-      `INSERT INTO profils (email, job, sudoname, about_you, profil_image, user_id)   
-       VALUES ($1, $2, $3, $4, $5, $6)        
+      `INSERT INTO profils (email, job, sudoname, about_you, profil_image, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
       [email, job, sudoname, about_you, profil_image, user_id]
     );
-    console.log("Nouveau profil ajouté :", newProfil.rows[0]);
+
+    console.log("🆕 Nouveau profil ajouté :", newProfil.rows[0]);
     return res.status(201).json(newProfil.rows[0]);
   } catch (error) {
-    console.error("Erreur SQL :", error);
-    console.error("❌ Erreur complète route /profil :", error.message, error.stack);
-
+    console.error("❌ Erreur SQL :", error);
     res.status(500).send("Erreur lors de l'ajout ou de la mise à jour du profil.");
   }
 });
