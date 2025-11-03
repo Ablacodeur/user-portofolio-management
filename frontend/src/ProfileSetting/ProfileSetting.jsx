@@ -106,6 +106,9 @@ export default function ProfileSetting() {
 
               console.log('new user profil :', response.data);
               dispatch(setTheProfil(response.data));
+              const refresh = await axios.get(`${import.meta.env.VITE_API_URL}/getprofil?user_id=${user.id}`);
+              dispatch(setTheProfil(refresh.data[0]));
+
               alert('Profile updated successfully!');
             } catch (error) {
               console.error('Erreur lors de la connexion :', error);

@@ -397,45 +397,54 @@ app.get("/getprofil", async (req, res) => {
 });
 
 app.post("/profil", upload.single("profil_image"), async (req, res) => {
-  console.log("📦 Headers:", req.headers['content-type']);
+  console.log("📦 Headers:", req.headers["content-type"]);
   console.log("🧩 Body keys:", Object.keys(req.body || {}));
 
   const { email, job, sudoname, about_you } = req.body;
   let { user_id } = req.body;
 
-  // ✅ Conversion sécurisée
+  // 🔹 Nettoyage du user_id
   if (Array.isArray(user_id)) user_id = user_id[0];
   user_id = parseInt(user_id, 10);
   if (isNaN(user_id)) {
     return res.status(400).json({ error: "user_id invalide ou manquant" });
   }
 
-  const profil_image = req.file
-    ? (req.file.path || req.file.secure_url || req.file.url || null)
-    : null;
-
-  if (!sudoname || !about_you) {
-    return res.status(400).json({ error: "Tous les champs sont obligatoires." });
+  // 🔹 Gestion correcte de l'image
+  let profil_image = null;
+  if (req.file) {
+    profil_image =
+      req.file.path || req.file.secure_url || req.file.url || null;
+  } else if (req.body.profil_image) {
+    // ✅ Garde l'ancienne image si aucune nouvelle n'est envoyée
+    profil_image = req.body.profil_image;
   }
 
   try {
+    // Vérifie si le profil existe déjà
     const existing = await pool.query(
       "SELECT * FROM profils WHERE email = $1 AND user_id = $2",
       [email, user_id]
     );
 
     if (existing.rows.length > 0) {
+      // 🔄 Mise à jour sans écraser l'image si non modifiée
       const updatedProfil = await pool.query(
-        `UPDATE profils 
-         SET job = $1, about_you = $2, profil_image = $3, sudoname = $4
+        `UPDATE profils
+         SET job = $1,
+             about_you = $2,
+             profil_image = COALESCE($3, profil_image),
+             sudoname = $4
          WHERE email = $5 AND user_id = $6
          RETURNING *`,
         [job, about_you, profil_image, sudoname, email, user_id]
       );
+
       console.log("✅ Profil mis à jour :", updatedProfil.rows[0]);
       return res.status(200).json(updatedProfil.rows[0]);
     }
 
+    // 🆕 Création d’un nouveau profil
     const newProfil = await pool.query(
       `INSERT INTO profils (email, job, sudoname, about_you, profil_image, user_id)
        VALUES ($1, $2, $3, $4, $5, $6)
@@ -447,7 +456,9 @@ app.post("/profil", upload.single("profil_image"), async (req, res) => {
     return res.status(201).json(newProfil.rows[0]);
   } catch (error) {
     console.error("❌ Erreur SQL :", error);
-    res.status(500).send("Erreur lors de l'ajout ou de la mise à jour du profil.");
+    res
+      .status(500)
+      .send("Erreur lors de l'ajout ou de la mise à jour du profil.");
   }
 });
 
