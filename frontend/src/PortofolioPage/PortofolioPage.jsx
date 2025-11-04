@@ -20,8 +20,8 @@ export default function PortofolioPage() {
 
   const [page, setPage] = useState('portofolio');
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
-  // ✅ Récupération de l'utilisateur connecté (GitHub ou local)
   useEffect(() => {
     const fetchUser = async () => {
       if (user && user.id) return;
@@ -38,13 +38,8 @@ export default function PortofolioPage() {
     fetchUser();
   }, [dispatch, user]);
 
-  // ✅ Fetch profil + projets quand userID est dispo
   useEffect(() => {
-    if (!userID) {
-      console.log("⏳ En attente de userID...");
-      return;
-    }
-
+    if (!userID) return;
     const fetchData = async () => {
       try {
         setIsLoadingData(true);
@@ -64,20 +59,15 @@ export default function PortofolioPage() {
         setIsLoadingData(false);
       }
     };
-
     fetchData();
   }, [userID, dispatch]);
 
-  // ✅ Construit le chemin complet de l'image
   const imagePath = profile?.profil_image
     ? (profile.profil_image.startsWith('http')
         ? profile.profil_image
         : `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${profile.profil_image.startsWith('/') ? '' : '/'}${profile.profil_image}`)
     : null;
 
-  console.log("🖼️ ImagePath utilisé :", imagePath);
-
-  // ✅ Affiche un spinner global pendant le chargement initial
   if (isLoadingData) {
     return (
       <Box sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -86,8 +76,11 @@ export default function PortofolioPage() {
     );
   }
 
+  const toggleExpand = () => setExpanded(!expanded);
+
   return (
     <Box sx={{ position: 'relative' }}>
+      {/* 🖼️ Image de couverture */}
       <Box
         sx={{
           height: '23vh',
@@ -98,6 +91,7 @@ export default function PortofolioPage() {
         }}
       />
 
+      {/* 🧍‍♂️ Avatar */}
       <Link to={"/profile"}>
         <Box
           sx={{
@@ -119,7 +113,7 @@ export default function PortofolioPage() {
         >
           {profile?.profil_image ? (
             <img
-              key={profile.profil_image} 
+              key={profile.profil_image}
               src={imagePath}
               alt="profile"
               loading="lazy"
@@ -130,8 +124,7 @@ export default function PortofolioPage() {
                 transition: 'opacity 0.4s ease',
               }}
               onError={(e) => {
-                console.warn("❌ Erreur de chargement image :", e.target.src);
-                e.target.style.display = "none"; 
+                e.target.style.display = "none";
               }}
             />
           ) : (
@@ -149,6 +142,7 @@ export default function PortofolioPage() {
         </Box>
       </Link>
 
+      {/* 🧾 Informations principales */}
       <Box
         sx={{
           marginTop: '100px',
@@ -185,14 +179,49 @@ export default function PortofolioPage() {
           </a>
         </Button>
 
-        <p style={{ fontSize: '16px' }}>
-          <span style={{ color: '#989494' }}>Bio</span>
-          <br />
-          {profile.about_you}
-        </p>
+        {/* ✅ Bio dynamique avec "Lire plus / Lire moins" */}
+        {profile.about_you && (
+          <Box>
+            <p
+              style={{
+                fontSize: '16px',
+                color: '#333',
+                overflow: expanded ? 'visible' : 'hidden',
+                display: expanded ? 'block' : '-webkit-box',
+                WebkitLineClamp: expanded ? 'unset' : 4,
+                WebkitBoxOrient: 'vertical',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'pre-line',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              <span style={{ color: '#989494' }}>Bio</span>
+              <br />
+              {profile.about_you}
+            </p>
+
+            {profile.about_you.length > 150 && (
+              <Button
+                variant="plain"
+                color="primary"
+                size="sm"
+                onClick={toggleExpand}
+                sx={{
+                  mt: -1,
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                  padding: 0,
+                }}
+              >
+                {expanded ? 'Lire moins' : 'Lire plus'}
+              </Button>
+            )}
+          </Box>
+        )}
 
         <hr style={{ width: '100%', border: '1px solid #989494', marginTop: '20px' }} />
 
+        {/* 🎵 Liste des projets */}
         <Box sx={{ marginBottom: '50px', width: '100%' }}>
           {projectList.map((project, id) => (
             <Button
