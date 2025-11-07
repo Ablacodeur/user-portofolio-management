@@ -15,6 +15,7 @@ import './style.css';
 import Browser from './Browser/Browser.jsx'
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import AuthCallback from './AuthCallback.jsx'
+import SearchBrowser from './SearchBrowser/SearchBrowser.jsx'
 
 
 
@@ -30,6 +31,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/forgetpass" element={<ForgetPass />} />
           <Route path="/resetpass" element={<ResetPass />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/search-browser" element={<SearchBrowser />} />
 
           <Route
             path="profile"

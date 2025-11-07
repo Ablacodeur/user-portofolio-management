@@ -14,10 +14,31 @@ import SlideSection from "../SlideSection/SlideSection";
 import Footer from "../Footer/Footer";
 import { FilterBar } from "../FilterBar/FilterBar";
 import { ScrollTrigger } from "gsap/all";
+import { setprofilList } from "../store/user-project/profile-slice";
+
 export default function Browser() {
   const imageContainerRef = useRef(null);
   const titleRef = useRef(null); 
   const typingTextRef = useRef(null);
+  const dispatch = useDispatch();
+
+// POUR FECTHER TOUS LES PROFILS DANS LE STORE
+  useEffect(() => {
+    const fetchProfils = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/profils`, {
+          withCredentials: true, 
+        });
+        dispatch(setprofilList(res.data));
+        // console.log("Profils ajoutés au store :", res.data);
+      } catch (err) {
+        // console.error("Erreur récupération profils :", err);
+      }
+    };
+
+    fetchProfils();
+  }, [dispatch]);
+
   useEffect(() => {
     // Animation GSAP pour fade-in et fade-out du texte
     gsap.fromTo(

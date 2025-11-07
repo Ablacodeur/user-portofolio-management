@@ -382,6 +382,16 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
   }
 });
 //profil routes
+app.get("/profils", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM profils ORDER BY id ASC");
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des profils :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 
 app.get("/getprofil", async (req, res) => {
   const {user_id}=req.query; //utilsation de point query car je suis dans une requte  GET FIAS QUE JE PREND LE PARAMS

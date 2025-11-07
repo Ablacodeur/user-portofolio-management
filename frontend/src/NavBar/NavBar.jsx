@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Button } from "@mui/joy";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 export default function NavBar() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [searchText, setSearchText] = useState();
+    const dispatch = useDispatch();
+
+    function handleChange(e) {
+      setSearchText(e.target.value);
+      // dispatch(settheSearch(e.target.value));
+      console.log(searchText);
+      
+    }
+    function handleKeyDown(e) {
+        if (e.key === "Enter" && searchText.trim() !== "") {
+          // on envoie le texte dans le "state" de navigation
+         navigate("/search-browser", { state: { searchText } });
+        }
+      }
 
   return (
     <Box sx={{ width: "100%", top: 0, position: "sticky"}}>
@@ -36,7 +52,7 @@ export default function NavBar() {
           >
             {/* Barre de recherche */}
             <div className="d-flex align-items-center my-2 my-lg-0">
-              <SearchBar />
+              <SearchBar onTextChange={handleChange} onKeyDown={handleKeyDown} />
             </div>
 
             {/* Boutons */}
