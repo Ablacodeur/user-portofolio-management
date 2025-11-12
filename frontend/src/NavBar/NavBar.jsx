@@ -28,7 +28,7 @@ export default function NavBar() {
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           {/* LOGO */}
-          <a className="navbar-brand fw-bold" href="#">
+          <a className="navbar-brand fw-bold" href="/">
             USM
           </a>
 

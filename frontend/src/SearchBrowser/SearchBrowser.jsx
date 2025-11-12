@@ -1,5 +1,9 @@
+import { Box, Stack } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import NavBar from "../NavBar/NavBar";
+import Footer from "../Footer/Footer";
+import SearchProfilCard from "../SearchProfilCard/SearchProfilCard";
 
 export default function SearchBrowser() {
   const location = useLocation();
@@ -15,18 +19,24 @@ export default function SearchBrowser() {
   console.log("Résultats filtrés :", filteredList);
 
   return (
-    <div>
-      <h2>Résultats pour : "{searchText}"</h2>
+    <Box
+      sx={{
+        background: "linear-gradient(to bottom, #f1eded, #767CE8, #e3e5ed)",
+        maxHeight: "110vh", 
+       
+      }}
+    >
+    <NavBar />
+      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'80vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
       {filteredList.length === 0 ? (
-        <p>Aucun profil trouvé.</p>
+        <h4>Aucun profil trouvé a ce nom. <Link to="/">Retour à la page d'accueil</Link></h4>
       ) : (
         filteredList.map((p) => (
-          <div key={p.id}>
-            <h3>{p.sudoname}</h3>
-            <p>{p.job}</p>
-          </div>
+          <SearchProfilCard key={p.id} profil={p} />
         ))
       )}
-    </div>
+      </Box>
+      <Footer />
+    </Box>
   );
 }
