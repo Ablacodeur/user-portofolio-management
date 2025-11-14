@@ -4,20 +4,20 @@ import { Link, useLocation } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import Footer from "../Footer/Footer";
 import SearchProfilCard from "../SearchProfilCard/SearchProfilCard";
-import { SearchBar } from "../SearchBar/SearchBar";
+import { FilterBar } from "../FilterBar/FilterBar";
 
-export default function SearchBrowser() {
+export default function FilterBrowser() {
   const location = useLocation();
   const profils = useSelector((store) => store.PROFILE.profilList);
 
   // 👇 récupère le texte envoyé depuis navigate()
-  const searchText = location.state?.searchText || "";
-  console.log("Texte de recherche reçu :", searchText);
-  const filteredList = profils.filter((profil) =>
-    profil.sudoname.toUpperCase().includes(searchText.trim().toUpperCase())
-  );
+  const category = location.state?.category|| "";
+  console.log("categorie reçu :", category);
+const filterList = profils.filter((profil) =>
+  (profil.job || "").toUpperCase().includes(category.trim().toUpperCase())
+);
 
-  console.log("Résultats filtrés :", filteredList);
+  console.log("Résultats filtrés :", filterList);
 
   return (
     <Box
@@ -27,12 +27,11 @@ export default function SearchBrowser() {
        
       }}
     >
-    <SearchBar />
-      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'80vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
-      {filteredList.length === 0 ? (
-        <h4>Aucun profil trouvé a ce nom. <Link to="/">Retour à la page d'accueil</Link></h4>
+      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'85vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
+      {filterList.length === 0 ? (
+        <h4>Aucun artiste trouvé pour cette categorie   <Link to="/">Retour à la page d'accueil</Link></h4>
       ) : (
-        filteredList.map((p) => (
+        filterList.map((p) => (
           <SearchProfilCard key={p.id} profil={p} />
         ))
       )}

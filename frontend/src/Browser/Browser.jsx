@@ -21,6 +21,7 @@ export default function Browser() {
   const titleRef = useRef(null); 
   const typingTextRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
 // POUR FECTHER TOUS LES PROFILS DANS LE STORE
   useEffect(() => {
@@ -122,6 +123,11 @@ export default function Browser() {
       }
     );
   }, []);  
+
+  const handleFilter = (category) => {
+    console.log("🎯 Catégorie sélectionnée :", category);
+    navigate("/filter-browser", { state: { category} });
+  };
   return (
     <Box
       sx={{
@@ -215,7 +221,7 @@ export default function Browser() {
       </Typography>      </Box>
       <Box sx={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: '250px',alignItems: 'center',textAlign: 'center',marginBottom:
       '150px'}}>
-        <FilterBar/>
+        <FilterBar onFilter={handleFilter} />
       </Box>
       <Box sx={{ maxWidth: '100vw', overflowY:'hidden', display: 'flex', justifyContent: 'center',alignItems: 'center',backgroundColor:'#e2e3e3'  }}>
         <SlideSection />

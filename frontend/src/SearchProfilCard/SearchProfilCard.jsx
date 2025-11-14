@@ -15,8 +15,8 @@ export default function SearchProfilCard({ profil }) {
   console.log("🔍 Image URL:", imagePath); // ← vérifie dans la console
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardMedia sx={{ height: 200 }} image={imagePath } title={profil.sudoname} />
+    <Card sx={{ width: 200, height: 300 }}>
+      <CardMedia sx={{ height: 100 }} image={imagePath } title={profil.sudoname} />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {profil.sudoname}
