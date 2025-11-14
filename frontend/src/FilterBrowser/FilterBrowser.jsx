@@ -5,6 +5,7 @@ import NavBar from "../NavBar/NavBar";
 import Footer from "../Footer/Footer";
 import SearchProfilCard from "../SearchProfilCard/SearchProfilCard";
 import { FilterBar } from "../FilterBar/FilterBar";
+import { SearchBar } from "../SearchBar/SearchBar";
 
 export default function FilterBrowser() {
   const location = useLocation();
@@ -27,6 +28,7 @@ const filterList = profils.filter((profil) =>
        
       }}
     >
+    <NavBar/>
       <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'85vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
       {filterList.length === 0 ? (
         <h4>Aucun artiste trouvé pour cette categorie   <Link to="/">Retour à la page d'accueil</Link></h4>
