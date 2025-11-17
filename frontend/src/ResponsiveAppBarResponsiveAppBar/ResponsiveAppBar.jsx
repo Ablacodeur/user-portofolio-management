@@ -14,47 +14,45 @@ export default function ResponsiveAppBar() {
     const navigate = useNavigate();
     const profile = useSelector((store) => store.PROFILE.theProfil);
 
-    // Initiales si pas d'image
-        const getInitials = (name) => {
+    // 1️⃣ Initiales
+    const getInitials = (name) => {
         if (!name) return "U";
 
-        // 1️⃣ Nettoyage
         const clean = name.trim();
 
-        // 2️⃣ Si le pseudo contient un espace → "Prénom Nom"
         if (clean.includes(" ")) {
             const parts = clean.split(" ");
-            const first = parts[0]?.[0]?.toUpperCase() || "";
-            const last = parts[1]?.[0]?.toUpperCase() || "";
-            return first + last;
+            return (parts[0][0] + parts[1][0]).toUpperCase();
         }
 
-        // 3️⃣ Si pseudo en CamelCase → ex: "FustaDev" → F D
         const camelMatches = clean.match(/[A-Z]/g);
         if (camelMatches && camelMatches.length >= 2) {
             return camelMatches[0] + camelMatches[1];
         }
 
-        // 4️⃣ Si pseudo contient un underscore → ex: "john_doe"
         if (clean.includes("_")) {
             const parts = clean.split("_");
             return (parts[0][0] + parts[1][0]).toUpperCase();
         }
 
-        // 5️⃣ Sinon : juste première lettre
         return clean[0].toUpperCase();
-        };
+    };
 
-            const fullImagePath = profile?.profil_image
-                ? `${import.meta.env.VITE_API_URL}${
-                    profile.profil_image.startsWith("/") ? "" : "/"
-                }${profile.profil_image}`
-                : null;
+    // 2️⃣ Image complète
+        const fullImagePath = profile?.profil_image
+            ? (
+                profile.profil_image.startsWith("http")
+                    ? profile.profil_image
+                    : `${import.meta.env.VITE_API_URL}${
+                        profile.profil_image.startsWith("/") ? "" : "/"
+                    }${profile.profil_image}`
+            )
+        : null;
 
-            const handleOpenChange = React.useCallback(
-                (event, isOpen) => setOpen(isOpen),
-                [],
-            );
+    const handleOpenChange = React.useCallback(
+        (event, isOpen) => setOpen(isOpen),
+        [],
+    );
 
     const handleLogout = async () => {
         try {
@@ -79,9 +77,7 @@ export default function ResponsiveAppBar() {
                         alignItems: 'center',
                         width: '100%',
                     }}>
-                        <Link to={"/"}>
-                            <img src={logo} />
-                        </Link>
+                        <Link to={"/"}><img src={logo} /></Link>
 
                         <Box>
                             <Dropdown sx={{ position: 'relative' }} open={open} onOpenChange={handleOpenChange}>
@@ -99,26 +95,39 @@ export default function ResponsiveAppBar() {
                                     }}
                                 >
                                     <Avatar
-                                        src={fullImagePath || null}   // ⬅️ afficher l'image SEULEMENT si elle existe réellement
+                                        {...(fullImagePath ? { src: fullImagePath } : {})}
                                         alt="Profile"
-                                        sx={{ width: "100%", height: "100%", fontWeight: "bold", fontSize: "14px" }}
+                                        sx={{
+                                            width: "100%",
+                                            height: "100%",
+                                            bgcolor: "#bdbdbd",
+                                            color: "white",
+                                            fontWeight: "bold",
+                                            fontSize: "14px",
+                                        }}
                                     >
                                         {!fullImagePath && getInitials(profile?.sudoname)}
                                     </Avatar>
-
                                 </MenuButton>
 
                                 {/* Menu déroulant */}
                                 <Menu sx={{ padding: '15px' }}>
                                     <MenuItem>
                                         <Box>
-                                        <Avatar
-                                            src={fullImagePath || null}
-                                            alt="Profile"
-                                            sx={{ width: 30, height: 30, marginRight: 1, fontWeight: "bold" }}
-                                        >
-                                            {!fullImagePath && getInitials(profile?.sudoname)}
-                                        </Avatar>
+                                            <Avatar
+                                                {...(fullImagePath ? { src: fullImagePath } : {})}
+                                                alt="Profile"
+                                                sx={{
+                                                    width: 30,
+                                                    height: 30,
+                                                    marginRight: 1,
+                                                    bgcolor: "#bdbdbd",
+                                                    color: "white",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                {!fullImagePath && getInitials(profile?.sudoname)}
+                                            </Avatar>
                                         </Box>
 
                                         <Box>
@@ -133,43 +142,22 @@ export default function ResponsiveAppBar() {
 
                                     <Box sx={{ width: '100%', borderTop: '1px solid #ccc', margin: '10px 0' }} />
 
-                                    <MenuItem>
-                                        <Typography sx={{ fontSize: 'small' }}>Account</Typography>
-                                    </MenuItem>
+                                    <MenuItem><Typography sx={{ fontSize: 'small' }}>Account</Typography></MenuItem>
 
-                                    <MenuItem>
-                                        <AccountCircleOutlinedIcon />
-                                        <Link to={"/profile"} style={{ color: 'black', textDecoration: 'none' }}>
-                                            &nbsp;Profile settings
-                                        </Link>
-                                    </MenuItem>
+                                    <MenuItem><AccountCircleOutlinedIcon /><Link to={"/profile"} style={{ color:'black',textDecoration:'none' }}>&nbsp;Profil settings</Link></MenuItem>
 
-                                    <MenuItem>
-                                        <PhotoLibraryOutlinedIcon />
-                                        <Link to={"/projectsetting"} style={{ color: 'black', textDecoration: 'none' }}>
-                                            &nbsp;Project settings
-                                        </Link>
-                                    </MenuItem>
+                                    <MenuItem><PhotoLibraryOutlinedIcon /><Link to={"/projectsetting"} style={{ color:'black',textDecoration:'none' }}>&nbsp;Project settings</Link></MenuItem>
 
-                                    <MenuItem>
-                                        <AirplayOutlinedIcon />
-                                        <Link to={"/portofolio"} style={{ color: 'black', textDecoration: 'none' }}>
-                                            &nbsp;My Portofolio
-                                        </Link>
-                                    </MenuItem>
+                                    <MenuItem><AirplayOutlinedIcon /><Link to={"/portofolio"} style={{ color:'black',textDecoration:'none' }}>&nbsp;My Portofolio</Link></MenuItem>
 
                                     <Box sx={{ width: '100%', borderTop: '1px solid #ccc', margin: '10px 0' }} />
 
-                                    <MenuItem sx={{ color: 'red' }} onClick={handleLogout}>
-                                        <ExitToAppOutlinedIcon />
-                                        &nbsp;Logout
-                                    </MenuItem>
+                                    <MenuItem sx={{ color:'red' }} onClick={handleLogout}><ExitToAppOutlinedIcon />&nbsp;Logout</MenuItem>
                                 </Menu>
                             </Dropdown>
                         </Box>
                     </Box>
                 </div>
-
                 <Box sx={{ width: '100%', borderTop: '1px solid #ccc', margin: '5px 0' }} />
             </nav>
         </Box>
