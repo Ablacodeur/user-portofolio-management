@@ -57,7 +57,7 @@ export function FilterBar({ placeholder = "Select a talent...", onFilter }) {
         sx={{
           backgroundColor: "#041458",
           borderRadius: "0 10px 10px 0",
-          height: "42px",
+          border: "1px solid white",
           color: "white",
           fontWeight: 600,
           "&:hover": {

@@ -4,6 +4,8 @@ import { Button } from "@mui/joy";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import logo_usm from '../assets/resources/Logo_USM.png'
+
 
 export default function NavBar() {
     const navigate = useNavigate();
@@ -24,12 +26,12 @@ export default function NavBar() {
       }
 
   return (
-    <Box sx={{ width: "100%", top: 0, position: "sticky"}}>
+    <Box sx={{ width: "100%", top: 0, position:'sticky'}}>
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           {/* LOGO */}
           <a className="navbar-brand fw-bold" href="/">
-            USM
+            <img src={logo_usm} style={{ width: "110px", height: "auto" }} />
           </a>
 
           {/* Bouton hamburger visible sur petits écrans */}
