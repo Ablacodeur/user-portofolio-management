@@ -66,18 +66,20 @@ export default function AddForm() {
         formData.append("project_image", compressedFile);
       }
 
-      // Ajout des autres champs
+      // ✅ Ajout des autres champs (sans project_image, sans id, SANS user_id)
       for (const key in theProject) {
-        if (key !== "project_image" && key !== "id") {
+        if (key === "project_image" || key === "id" || key === "user_id") continue;
+        if (theProject[key] !== undefined && theProject[key] !== null) {
           formData.append(key, theProject[key]);
         }
       }
 
-      // Ajout de l'ID utilisateur
-      formData.append(
-        "user_id",
-        parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10)
-      );
+      // ✅ Ajout de l'ID utilisateur UNE SEULE FOIS
+      const userId = Array.isArray(user?.id) ? user.id[0] : user?.id;
+      if (!userId) {
+        throw new Error("Utilisateur non connecté : user.id manquant");
+      }
+      formData.append("user_id", parseInt(userId, 10));
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/projects`,
@@ -89,14 +91,21 @@ export default function AddForm() {
       );
 
       console.log("✅ Projet ajouté :", response.data);
+
+      // ✅ Ajout du projet dans la liste
       dispatch(setprojectList([...projectList, response.data]));
-      dispatch(setTheProject({
-              project_name: "",
-              demo_url: "",
-              repo_url: "",
-              description: "",
-              project_image: null,
-              }));
+
+      // ✅ Reset du formulaire
+      dispatch(
+        setTheProject({
+          project_name: "",
+          demo_url: "",
+          repo_url: "",
+          description: "",
+          project_image: null,
+        })
+      );
+
       alert("Projet ajouté avec succès !");
     } catch (error) {
       console.error("❌ Erreur lors de la soumission :", error);
