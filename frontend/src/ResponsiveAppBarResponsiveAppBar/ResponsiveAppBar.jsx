@@ -39,15 +39,21 @@ export default function ResponsiveAppBar() {
     };
 
     // 2️⃣ Image complète
-        const fullImagePath = profile?.profil_image
-            ? (
-                profile.profil_image.startsWith("http")
-                    ? profile.profil_image
-                    : `${import.meta.env.VITE_API_URL}${
-                        profile.profil_image.startsWith("/") ? "" : "/"
-                    }${profile.profil_image}`
-            )
-        : null;
+    function buildImagePath(img) {
+        if (!img) return null;                    
+        if (img instanceof File) return null;     
+        if (typeof img !== "string") return null; 
+
+        // cas: URL Cloudinary complète
+        if (img.startsWith("http")) return img;
+
+        // cas: chemin backend /uploads
+        return `${import.meta.env.VITE_API_URL}${
+            img.startsWith("/") ? "" : "/"
+        }${img}`;
+    }
+
+    const fullImagePath = buildImagePath(profile?.profil_image);
 
     const handleOpenChange = React.useCallback(
         (event, isOpen) => setOpen(isOpen),

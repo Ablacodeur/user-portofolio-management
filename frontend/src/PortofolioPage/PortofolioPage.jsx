@@ -21,6 +21,8 @@ export default function PortofolioPage() {
   const [page, setPage] = useState('portofolio');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  console.log("PROFILE IMAGE TYPE =>", typeof profile.profil_image, profile.profil_image);
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -62,11 +64,19 @@ export default function PortofolioPage() {
     fetchData();
   }, [userID, dispatch]);
 
-  const imagePath = profile?.profil_image
-    ? (profile.profil_image.startsWith('http')
-        ? profile.profil_image
-        : `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${profile.profil_image.startsWith('/') ? '' : '/'}${profile.profil_image}`)
-    : null;
+  function buildImagePath(img) {
+    if (!img) return null;                   
+    if (img instanceof File) return null;    
+    if (typeof img !== "string") return null; 
+
+    // cas: URL Cloudinary
+    if (img.startsWith("http")) return img;
+
+    // cas: chemin backend
+    return `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}${img.startsWith('/') ? '' : '/'}${img}`;
+  }
+
+  const imagePath = buildImagePath(profile?.profil_image);
 
   if (isLoadingData) {
     return (
