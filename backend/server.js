@@ -347,7 +347,7 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
   const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
 
   try {
-    if (id) {
+    if (id && !["", "null", "undefined"].includes(id)) {
       // 🔹 Si un ID est fourni → on met à jour ce projet précis
       const updatedProject = await pool.query(
         `UPDATE project 
