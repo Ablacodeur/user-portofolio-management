@@ -68,7 +68,7 @@ export default function AddForm() {
 
       // Ajout des autres champs
       for (const key in theProject) {
-        if (key !== "project_image") {
+        if (key !== "project_image" && key !== "id") {
           formData.append(key, theProject[key]);
         }
       }
@@ -90,7 +90,13 @@ export default function AddForm() {
 
       console.log("✅ Projet ajouté :", response.data);
       dispatch(setprojectList([...projectList, response.data]));
-      dispatch(setTheProject(response.data));
+      dispatch(setTheProject({
+              project_name: "",
+              demo_url: "",
+              repo_url: "",
+              description: "",
+              project_image: null,
+              }));
       alert("Projet ajouté avec succès !");
     } catch (error) {
       console.error("❌ Erreur lors de la soumission :", error);
