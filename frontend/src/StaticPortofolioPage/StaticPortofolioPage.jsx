@@ -131,12 +131,12 @@ export default function StaticPortofolioPage() {
         <hr style={{ width: '100%', marginTop: '20px' }} />
 
         {/* Projets */}
-        {projectList
-          .filter(project => project.user_id === profil.id)
-          .map((project, idx) => (
-            <CardComponent key={idx} project={project} />
-          ))
-        }
+            {projectList
+            .filter(project => project.profil_id === Number(id))
+            .map((project, idx) => (
+                <CardComponent key={idx} project={project} />
+            ))
+            }
       </Box>
     </Box>
   );
