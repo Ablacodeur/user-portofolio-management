@@ -333,7 +333,7 @@ app.get("/getproject", async (req, res) => {
   }});
 
 app.post("/projects", upload.single("project_image"), async (req, res) => {
-  const { id, project_name, demo_url, repo_url, description, user_id } = req.body;
+  const { id, project_name, demo_url, repo_url, description, user_id, profil_id } = req.body;
   console.log("Requête complète reçue :", req.body);
 
   const project_image = req.file
@@ -345,17 +345,22 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
   }
 
   const userId = Array.isArray(user_id) ? parseInt(user_id[0], 10) : parseInt(user_id, 10);
+  const profilId = Array.isArray(profil_id) ? parseInt(profil_id[0], 10) : parseInt(profil_id, 10);
 
   try {
     if (id && !["", "null", "undefined"].includes(id)) {
       // 🔹 Si un ID est fourni → on met à jour ce projet précis
       const updatedProject = await pool.query(
         `UPDATE project 
-         SET project_name = $1, demo_url = $2, repo_url = $3, description = $4, 
-             project_image = COALESCE($5, project_image)
-         WHERE id = $6 AND user_id = $7
-         RETURNING *`,
-        [project_name, demo_url, repo_url, description, project_image, id, userId]
+          SET project_name = $1, 
+              demo_url = $2, 
+              repo_url = $3, 
+              description = $4, 
+              project_image = COALESCE($5, project_image),
+              profil_id = $6
+          WHERE id = $7 AND user_id = $8
+          RETURNING *`,
+        [project_name, demo_url, repo_url, description, project_image, profilId, id, userId]
       );
 
       if (updatedProject.rows.length === 0) {
@@ -368,10 +373,10 @@ app.post("/projects", upload.single("project_image"), async (req, res) => {
 
     // 🔹 Sinon, on crée un nouveau projet
     const newProject = await pool.query(
-      `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [project_name, demo_url, repo_url, description, project_image, userId]
+      `INSERT INTO project (project_name, demo_url, repo_url, description, project_image, user_id, profil_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *`,
+      [project_name, demo_url, repo_url, description, project_image, userId, profilId]
     );
 
     console.log("Nouveau projet ajouté :", newProject.rows[0]);

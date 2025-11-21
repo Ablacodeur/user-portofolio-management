@@ -20,6 +20,7 @@ export default function AddForm() {
   const projectList = useSelector((store) => store.PROJECT.projectList);
   const user = useSelector((state) => state.USER?.user);
   const theProject = useSelector((store) => store.PROJECT.theProject);
+   const profil = useSelector((store) => store.PROFILE.theProfil);
 
   const [isLoading, setIsLoading] = useState(false); // ✅ état de chargement
 
@@ -80,6 +81,8 @@ export default function AddForm() {
         throw new Error("Utilisateur non connecté : user.id manquant");
       }
       formData.append("user_id", parseInt(userId, 10));
+      //  AJOUT  profil_id
+      formData.append("profil_id", parseInt(profil.id, 10));
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/projects`,

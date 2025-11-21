@@ -32,7 +32,7 @@ export default function SearchBrowser() {
         <h4>Aucun profil trouvé a ce nom. <Link to="/">Retour à la page d'accueil</Link></h4>
       ) : (
         filteredList.map((p) => (
-          <SearchProfilCard key={p.id} profil={p} />
+          <SearchProfilCard key={p.id} profil={p}/>
         ))
       )}
       </Box>

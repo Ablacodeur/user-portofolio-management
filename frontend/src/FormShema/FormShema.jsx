@@ -20,9 +20,10 @@ export default function FormShema({ id }) {
   const projectList = useSelector((store) => store.PROJECT.projectList);
   const theProject = useSelector((store) => store.PROJECT.theProject);
   const user = useSelector((state) => state.USER?.user);
+  const profil = useSelector((store) => store.PROFILE.theProfil);   // 🔥 AJOUTÉ
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false); // ✅ pour le bouton “Saving…”
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (id !== null) {
@@ -39,17 +40,19 @@ export default function FormShema({ id }) {
     const { name, value, files } = e.target;
 
     if (e.target.type === "file") {
-      dispatch(setTheProject({
-        ...theProject,
-        [name]: files[0],
-      }));
-      console.log("Fichier sélectionné :", files[0]);
+      dispatch(
+        setTheProject({
+          ...theProject,
+          [name]: files[0],
+        })
+      );
     } else {
-      dispatch(setTheProject({
-        ...theProject,
-        [name]: value,
-      }));
-      console.log(`Updated: ${name} = ${value}`);
+      dispatch(
+        setTheProject({
+          ...theProject,
+          [name]: value,
+        })
+      );
     }
   }
 
@@ -58,47 +61,43 @@ export default function FormShema({ id }) {
       try {
         await axios.delete(`${import.meta.env.VITE_API_URL}/projects/${projectId}`);
         dispatch(deleteProject(projectId));
-        console.log("Projet supprimé avec succès !");
         navigate('/projectsetting');
       } catch (error) {
-        console.error("Erreur lors de la suppression du projet :", error);
+        console.error("Erreur lors de la suppression :", error);
       }
     }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setIsLoading(true); // ✅ active le spinner
+    setIsLoading(true);
+
     try {
       const formData = new FormData();
 
-      // ✅ compression si nouvelle image ajoutée
+      // 🔥 Compression si nouvelle image
       if (theProject.project_image instanceof File) {
-        console.log("Compression de l'image du projet en cours...");
         const compressedFile = await imageCompression(theProject.project_image, {
           maxSizeMB: 0.6,
           maxWidthOrHeight: 1200,
           useWebWorker: true,
         });
-        console.log(
-          "Avant :", (theProject.project_image.size / 1024 / 1024).toFixed(2),
-          "MB | Après :", (compressedFile.size / 1024 / 1024).toFixed(2),
-          "MB"
-        );
         formData.append("project_image", compressedFile);
       }
 
-      // autres propriétés
+      // 🔥 Ajout de TOUS les champs sauf project_image
       for (const key in theProject) {
         if (key !== "project_image") {
           formData.append(key, theProject[key]);
         }
       }
 
-      formData.append(
-        "user_id",
-        parseInt(Array.isArray(user?.id) ? user.id[0] : user?.id, 10)
-      );
+      // 🔥 user_id obligatoire
+      const userId = Array.isArray(user?.id) ? user.id[0] : user?.id;
+      formData.append("user_id", parseInt(userId, 10));
+
+      // 🔥 AJOUT profil_id obligatoire (MANQUAIT)
+      formData.append("profil_id", parseInt(profil.id, 10));
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/projects`,
@@ -109,12 +108,13 @@ export default function FormShema({ id }) {
         }
       );
 
-      console.log("✅ Projet modifié avec succès :", response.data);
+      console.log("Projet modifié avec succès :", response.data);
       navigate("/portofolio");
+
     } catch (error) {
-      console.error("❌ Erreur lors de la soumission :", error);
+      console.error("Erreur lors de la soumission :", error);
     } finally {
-      setIsLoading(false); // ✅ désactive le spinner
+      setIsLoading(false);
     }
   }
 
@@ -135,7 +135,7 @@ export default function FormShema({ id }) {
             margin: '0 auto',
           }}
         >
-          {/* section image */}
+          {/* IMAGE */}
           <Box
             sx={{
               display: 'flex',
@@ -144,113 +144,79 @@ export default function FormShema({ id }) {
               gap: '40px',
               flexDirection: 'column',
               width: '100%',
-              borderRadius: '10px',
               padding: '20px',
               backgroundColor: '#E3E8EF',
               border: '1px solid #ccc',
-              boxShadow: '0px 0.2px 0px #ccc',
+            }}
+          >
+            <Avatar sx={{ width: '40px', height: '40px' }} />
+            <Typography level="h7" fontSize="small">
+              Image must be 256 x 256 pixels - max 2MB
+            </Typography>
+
+            <Button
+              variant="contained"
+              component="label"
+              sx={{
+                backgroundColor: '#ffffff',
+                color: 'black',
+                padding: '10px',
+                borderRadius: '5px',
+                fontWeight: 'bold',
+              }}
+            >
+              <CloudUploadOutlinedIcon />
+              <span style={{ marginLeft: '5px' }}>Upload Project Image</span>
+              <Input
+                type="file"
+                name="project_image"
+                accept="image/*"
+                onChange={setChange}
+                style={{ display: 'none' }}
+              />
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#ffffff',
+                color: '#DD524D',
+              }}
+            >
+              <DeleteForeverOutlinedIcon />
+              Delete Image
+            </Button>
+          </Box>
+
+          {/* INPUTS */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+              gap: '20px',
             }}
           >
             <Box>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '20px',
-                flexDirection: 'column',
-              }}>
-                <Avatar sx={{ width: '40px', height: '40px' }} />
-                <Typography level="h7" fontSize="small">
-                  Image must be 256 x 256 pixels - max 2MB
-                </Typography>
-              </Box>
-
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: '10px',
-                flexDirection: 'row',
-                width: '100%',
-                padding: { xs: '5px', sm: '10px' },
-                borderRadius: '10px',
-                alignItems: 'center',
-              }}>
-                <Button
-                  variant="contained"
-                  component="label"
-                  sx={{
-                    backgroundColor: '#ffffff',
-                    color: 'black',
-                    padding: '10px',
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    width: { xs: '130px', sm: '180px' },
-                    fontSize: '10.5px',
-                    textWrap: 'nowrap',
-                  }}
-                >
-                  <CloudUploadOutlinedIcon />
-                  <span style={{ marginLeft: '5px' }}>Upload Project Image</span>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    name="project_image"
-                    onChange={setChange}
-                    style={{ display: 'none' }}
-                  />
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#ffffff',
-                    color: '#DD524D',
-                    padding: '0px',
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    width: { xs: '130px', sm: '180px' },
-                    fontSize: '10.5px',
-                    textWrap: 'nowrap',
-                  }}
-                >
-                  <DeleteForeverOutlinedIcon />
-                  Delete Image
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-
-          {/* champs texte */}
-          <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-            gap: '20px',
-          }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <FormLabel>Project Name</FormLabel>
               <Input
                 type="text"
                 value={theProject?.project_name || ''}
                 onChange={setChange}
                 name="project_name"
-                sx={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
               />
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <Box>
               <FormLabel>Demo URL</FormLabel>
               <Input
                 type="text"
                 value={theProject?.demo_url || ''}
                 onChange={setChange}
                 name="demo_url"
-                sx={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
               />
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <Box>
               <FormLabel>Repository URL</FormLabel>
               <Input
                 type="text"
@@ -258,55 +224,34 @@ export default function FormShema({ id }) {
                 onChange={setChange}
                 name="repo_url"
                 disabled
-                sx={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
               />
             </Box>
           </Box>
 
           <Textarea
             name="description"
-            aria-label="minimum height"
             minRows={5}
             value={theProject?.description || ''}
             onChange={setChange}
             placeholder="Enter a short introduction..."
-            sx={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              boxShadow: '2px 2px 2px #ccc',
-            }}
           />
 
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '5px',
-            marginLeft: 'auto',
-          }}>
+          {/* BUTTONS */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
               variant="contained"
               type="submit"
               disabled={isLoading}
               sx={{
-                display: 'flex',
                 width: '150px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: '20px',
-                padding: '10px',
-                gap: '8px',
-                borderRadius: '5px',
-                fontWeight: 'bold',
                 backgroundColor: '#6466E9',
                 color: 'white',
+                fontWeight: 'bold',
               }}
             >
               {isLoading ? (
                 <>
-                  <CircularProgress size="sm" thickness={2} sx={{ color: 'white' }} />
+                  <CircularProgress size="sm" sx={{ color: 'white' }} />
                   <Typography sx={{ fontSize: '13px', color: 'white' }}>Saving…</Typography>
                 </>
               ) : (
@@ -321,18 +266,9 @@ export default function FormShema({ id }) {
               onClick={() => handleDelete(theProject.id)}
               variant="contained"
               sx={{
-                display: 'flex',
                 width: '100px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: '20px',
-                padding: '10px',
-                gap: '5px',
-                borderRadius: '5px',
                 backgroundColor: '#E3E8EF',
-                boxShadow: '1px 1px 1px #ccc',
                 color: 'black',
-                marginLeft: 'auto',
               }}
             >
               <DeleteOutlinedIcon />
