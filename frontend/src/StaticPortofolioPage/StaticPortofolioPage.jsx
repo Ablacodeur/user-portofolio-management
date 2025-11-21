@@ -1,16 +1,28 @@
 import { Box, Button, CircularProgress } from '@mui/joy';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from "react-router-dom";
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import CardComponent from '../Card/CardComponent';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import hero from '../assets/resources/profile-bg.png';
+import { setprojectList } from '../store/user-project/project-slice';
+import axios from 'axios';
 
 export default function StaticPortofolioPage() {
 
   const { id } = useParams(); 
+  const dispatch =useDispatch();
   const profilList = useSelector((store) => store.PROFILE?.profilList || []);
   const projectList = useSelector((store) => store.PROJECT.projectList);
+
+  useEffect(() => {
+  async function loadProjects() {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
+    dispatch(setprojectList(res.data));
+  }
+  loadProjects();
+}, []);
+
 
   const [expanded, setExpanded] = useState(false);
 
@@ -27,6 +39,15 @@ export default function StaticPortofolioPage() {
       </Box>
     );
   }
+  // Loader si les projets ne sont pas encore chargés
+    if (projectList.length === 0) {
+    return (
+        <Box sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <CircularProgress size="lg" />
+        </Box>
+    );
+    }
+
 
   function buildImagePath(img) {
     if (!img) return null;
