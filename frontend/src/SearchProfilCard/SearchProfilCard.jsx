@@ -20,9 +20,9 @@ export default function SearchProfilCard({ profil }) {
   };
 
   return (
-    <Card sx={{ width: 300, display: 'flex', flexDirection: 'row' }}>
+    <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <CardMedia
-        sx={{ width: 100, height: 80 }}
+        sx={{ width: 200, height: 80 }}
         image={imagePath}
         title={profil.sudoname}
       />

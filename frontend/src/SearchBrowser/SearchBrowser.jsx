@@ -22,7 +22,7 @@ export default function SearchBrowser() {
     <Box
       sx={{
         background: "linear-gradient(to bottom, #f1eded, #767CE8, #e3e5ed)",
-        maxHeight: "110vh", 
+        height: "100vh", 
        
       }}
     >
