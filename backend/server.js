@@ -321,16 +321,38 @@ app.post("/signin", (req, res, next) => {
 // ✅ Routes for the project
 
 app.get("/getproject", async (req, res) => {
-  const {user_id}=req.query; //utilsation de point query car je suis dans une requte  GET FIAS QUE JE PREND LE PARAMS
-  console.log("User ID reçu :", user_id);
-  
+  const { user_id, profil_id } = req.query;
+
+  console.log("Params reçus :", req.query);
+
   try {
-    const result = await pool.query("SELECT * FROM project WHERE user_id = $1", [user_id]);
-    res.json(result.rows);    
+    let result;
+
+    if (profil_id) {
+      console.log("Recherche par profil_id :", profil_id);
+      result = await pool.query(
+        "SELECT * FROM project WHERE profil_id = $1",
+        [profil_id]
+      );
+    } else if (user_id) {
+      console.log("Recherche par user_id :", user_id);
+      result = await pool.query(
+        "SELECT * FROM project WHERE user_id = $1",
+        [user_id]
+      );
+    } else {
+      return res.status(400).json({
+        error: "Veuillez fournir user_id OU profil_id"
+      });
+    }
+
+    res.json(result.rows);
+
   } catch (error) {
     console.error(error);
-    res.status(500).send("Erreur serveur lors de la récupération des tâches");
-  }});
+    res.status(500).send("Erreur serveur lors de la récupération des projets");
+  }
+});
 
 app.post("/projects", upload.single("project_image"), async (req, res) => {
   const { id, project_name, demo_url, repo_url, description, user_id, profil_id } = req.body;

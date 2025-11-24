@@ -17,8 +17,11 @@ export default function StaticPortofolioPage() {
 
   useEffect(() => {
   async function loadProjects() {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
-    dispatch(setprojectList(res.data));
+            const res = await axios.get(
+            `${import.meta.env.VITE_API_URL}/getproject`,
+            { params: { profil_id: id } }
+            );    
+        dispatch(setprojectList(res.data));
   }
   loadProjects();
 }, []);
@@ -40,13 +43,13 @@ export default function StaticPortofolioPage() {
     );
   }
   // Loader si les projets ne sont pas encore chargés
-    if (projectList.length === 0) {
-    return (
-        <Box sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <CircularProgress size="lg" />
-        </Box>
-    );
-    }
+if (projectList.length === 0) {
+  return (
+    <Box sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress size="lg" />
+    </Box>
+  );
+}
 
 
   function buildImagePath(img) {
