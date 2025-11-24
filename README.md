@@ -21,7 +21,7 @@ une gestion des projets,
 
 une authentification sécurisée (Google, GitHub, email/password),
 
-l’upload et la compression d’images via Cloudinary.
+l’upload et la compression d’images via Cloudinary
 
 🚀 Fonctionnalités principales
 🔐 Authentification & Sécurité
