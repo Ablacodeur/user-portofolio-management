@@ -27,7 +27,7 @@ export default function SearchBrowser() {
       }}
     >
     <NavBar />
-      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'80vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
+      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'90vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
       {filteredList.length === 0 ? (
         <h4>Aucun profil trouvé a ce nom. <Link to="/">Retour à la page d'accueil</Link></h4>
       ) : (
