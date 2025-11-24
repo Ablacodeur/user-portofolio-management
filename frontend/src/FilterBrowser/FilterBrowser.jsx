@@ -24,21 +24,21 @@ const filterList = profils.filter((profil) =>
     <Box
       sx={{
         background: "linear-gradient(to bottom, #f1eded, #767CE8, #e3e5ed)",
-        maxHeight: "110vh", 
-       
+        height: "100vh", 
       }}
     >
-    <NavBar/>
-      <Box sx={{ justifyContent:"center",textAlign:"center",alignItems:'center',height:'85vh' ,flexDirection:'row', display:'flex', gap:'20px' }}>
-      {filterList.length === 0 ? (
-        <h4>Aucun artiste trouvé pour cette categorie   <Link to="/">Retour à la page d'accueil</Link></h4>
-      ) : (
-        filterList.map((p) => (
-          <SearchProfilCard key={p.id} profil={p} />
-        ))
-      )}
+      <NavBar/>
+      <Box sx={{ display:'flex',alignItems:'center',justifyContent:"center",height:'70%' }}>
+        <Box sx={{flexDirection:'row', display:'flex', gap:'20px' }}>
+          {filterList.length === 0 ? (
+            <h4>Aucun artiste trouvé pour cette categorie   <Link to="/">Retour à la page d'accueil</Link></h4>
+          ) : (
+            filterList.map((p) => (
+              <SearchProfilCard key={p.id} profil={p} />
+            ))
+          )}
+        </Box>
       </Box>
-      <Footer />
     </Box>
   );
 }

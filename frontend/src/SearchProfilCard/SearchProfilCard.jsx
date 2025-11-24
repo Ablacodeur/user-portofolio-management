@@ -5,6 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
+import { Box } from '@mui/joy';
 
 export default function SearchProfilCard({ profil }) {
   const navigate = useNavigate();
@@ -22,14 +23,14 @@ export default function SearchProfilCard({ profil }) {
   return (
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <CardMedia
-        sx={{ width: '400px', height: '100%' }}
+        sx={{ width: '40%', height: '100%' }}
         image={imagePath}
         title={profil.sudoname}
       />
       <Box>
       <CardContent
         sx={{
-          flexGrow: 1,
+          width:'60%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'start'
