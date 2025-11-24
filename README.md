@@ -13,17 +13,17 @@ Voici un aperçu visuel de l'application **User Portfolio Management (UPM)** :
 User Portfolio Management est une application complète permettant aux utilisateurs de créer, gérer et afficher un portfolio professionnel en ligne.
 Le projet inclut :
 
-une interface publique (profile page statique personnalisée),
+#### une interface publique (profile page statique personnalisée),
 
-un dashboard utilisateur,
+#### un dashboard utilisateur,
 
-une gestion des projets,
+#### une gestion des projets,
 
 une authentification sécurisée (Google, GitHub, email/password),
 
 l’upload et la compression d’images via Cloudinary
 
-🚀 Fonctionnalités principales
+##🚀 Fonctionnalités principales
 🔐 Authentification & Sécurité
 
 Login avec Google OAuth
