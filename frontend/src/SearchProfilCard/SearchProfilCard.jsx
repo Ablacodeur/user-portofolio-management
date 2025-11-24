@@ -22,11 +22,11 @@ export default function SearchProfilCard({ profil }) {
   return (
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <CardMedia
-        sx={{ width: '250px', height: 80 }}
+        sx={{ width: '400px', height: '100%' }}
         image={imagePath}
         title={profil.sudoname}
       />
-
+      <Box>
       <CardContent
         sx={{
           flexGrow: 1,
@@ -65,6 +65,7 @@ export default function SearchProfilCard({ profil }) {
           En savoir plus
         </Button>
       </CardContent>
+      </Box>
     </Card>
   );
 }
