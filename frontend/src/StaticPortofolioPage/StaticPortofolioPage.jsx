@@ -107,6 +107,11 @@ if (projectList.length === 0) {
         sx={{
           marginTop: '100px',
           marginLeft: { xs: '30px', sm: '100px', md: '200px', lg: '300px' },
+          marginRight: { xs: '30px', sm: '100px', md: '200px', lg: '300px' },
+          gap: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
         }}
       >
         <h1 style={{ fontSize: '40px' }}>
