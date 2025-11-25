@@ -23,7 +23,7 @@ une authentification sécurisée (Google, GitHub, email/password),
 
 l’upload et la compression d’images via Cloudinary
 
-##🚀 Fonctionnalités principales
+## 🚀 Fonctionnalités principales
 🔐 Authentification & Sécurité
 
 Login avec Google OAuth
