@@ -22,11 +22,13 @@ export default function SearchProfilCard({ profil }) {
 
   return (
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
+      <Box sx={{ width: '40%' }}>
       <CardMedia
-        sx={{ width: '40%', height: '100%' }}
+        sx={{ height: '100%' }}
         image={imagePath}
         title={profil.sudoname}
       />
+      </Box>
       <Box>
       <CardContent
         sx={{
