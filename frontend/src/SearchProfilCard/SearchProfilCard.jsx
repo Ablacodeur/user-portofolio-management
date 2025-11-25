@@ -21,7 +21,7 @@ export default function SearchProfilCard({ profil }) {
   };
 
   return (
-    <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
+    <Card sx={{ width:{xs:300 ,md:400}, display: 'flex', flexDirection: 'row' ,margin:'5px'}}>
       <Box sx={{ width: '40%' }}>
         <CardMedia
           sx={{ height: '100%',width:'100%' }}

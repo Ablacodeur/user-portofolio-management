@@ -29,7 +29,7 @@ const filterList = profils.filter((profil) =>
     >
       <NavBar/>
       <Box sx={{ display:'flex',alignItems:'center',justifyContent:"center",height:'70%' }}>
-        <Box sx={{flexDirection:'row', display:'flex', gap:'20px' }}>
+        <Box sx={{flexDirection:{xs:'column',md:'row'}, display:'flex', gap:'20px' }}>
           {filterList.length === 0 ? (
             <h4>Aucun artiste trouvé pour cette categorie   <Link to="/">Retour à la page d'accueil</Link></h4>
           ) : (
