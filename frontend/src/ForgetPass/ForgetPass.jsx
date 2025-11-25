@@ -4,6 +4,7 @@ import image from '../assets/resources/login-bg.png'
 import s from './style.module.css'
 import logo from './../assets/resources/Logo.svg'
 import githubIcon from './../assets/resources/github.svg'
+import { Link } from 'react-router-dom'
 export default function ForgetPass() {
   return (
     <Box>

@@ -181,6 +181,9 @@ VITE_API_URL=http://localhost:5000
 npm run dev
 
 This is a solution to:(https:/https://devchallenges.io/challenge/user-portfolio-management). 
+## En perspective
+-Integration Mot de passe ouublier
+-Des likes
 
 
 ## 🧑‍💻 Auteur

@@ -116,7 +116,7 @@ export default function SignIn() {
 
               <Input placeholder='Enter email' name='username' onChange={handleChange} type='email' />
               <Input placeholder='Enter password' name='password' onChange={handleChange} type='password' />
-              <Button variant='plain' color='neutral' sx={{ color: '#6466E9', justifyContent: 'flex-end', padding: 0 }}>Forgot password?</Button>
+              <Link to={'/forgetpass'} ><Button variant='plain' color='neutral' sx={{ color: '#6466E9', justifyContent: 'flex-end', padding: 0 }}> Forgot password?</Button></Link>
 
               <Button variant='solid' sx={{ backgroundColor: '#6466E9', position: 'relative' }} type='submit' disabled={loading}>
                 {loading ? (
