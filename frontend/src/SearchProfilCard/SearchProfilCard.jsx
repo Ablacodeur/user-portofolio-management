@@ -24,7 +24,7 @@ export default function SearchProfilCard({ profil }) {
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <Box sx={{ width: '40%' }}>
       <CardMedia
-        sx={{ height: '100%' }}
+        sx={{ height: '100%',width:'60%' }}
         image={imagePath}
         title={profil.sudoname}
       />
@@ -35,7 +35,7 @@ export default function SearchProfilCard({ profil }) {
           width:'60%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'start'
+          alignItems: 'end'
         }}
       >
         <Typography gutterBottom variant="h6" component="div" noWrap>
