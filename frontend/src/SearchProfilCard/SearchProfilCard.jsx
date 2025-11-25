@@ -23,51 +23,51 @@ export default function SearchProfilCard({ profil }) {
   return (
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <Box sx={{ width: '40%' }}>
-      <CardMedia
-        sx={{ height: '100%',width:'100%' }}
-        image={imagePath}
-        title={profil.sudoname}
-      />
+        <CardMedia
+          sx={{ height: '100%',width:'100%' }}
+          image={imagePath}
+          title={profil.sudoname}
+        />
       </Box>
-      <Box>
-      <CardContent
-        sx={{
-          width:'60%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'end'
-        }}
-      >
-        <Typography gutterBottom variant="h6" component="div" noWrap>
-          {profil.sudoname}
-        </Typography>
-
-        <Typography
-          variant="body2"
+      <Box sx={{ width: '60%' }}>
+        <CardContent
           sx={{
-            color: 'text.secondary',
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            display: "-webkit-box",
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: "vertical",
+            width:'100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'start'
           }}
         >
-          {profil.about_you}
-        </Typography>
+          <Typography gutterBottom variant="h6" component="div" noWrap>
+            {profil.sudoname}
+          </Typography>
 
-        <Button
-          size="small"
-          onClick={goToPortfolio}
-          sx={{
-            padding: 0,
-            textTransform: "none",
-            marginTop: "4px"
-          }}
-        >
-          En savoir plus
-        </Button>
-      </CardContent>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {profil.about_you}
+          </Typography>
+
+          <Button
+            size="small"
+            onClick={goToPortfolio}
+            sx={{
+              padding: 0,
+              textTransform: "none",
+              marginTop: "4px"
+            }}
+          >
+            En savoir plus
+          </Button>
+        </CardContent>
       </Box>
     </Card>
   );

@@ -23,8 +23,8 @@ une authentification sécurisée (Google, GitHub, email/password),
 
 l’upload et la compression d’images via Cloudinary.
 
-🚀 Fonctionnalités principales
-🔐 Authentification & Sécurité
+## 🚀 Fonctionnalités principales
+### 🔐 Authentification & Sécurité
 
 Login avec Google OAuth
 
@@ -36,7 +36,7 @@ Sessions sécurisées (httpOnly, secure, sameSite: none)
 
 Cookies de session persistants
 
-👤 Gestion des profils
+### 👤 Gestion des profils
 
 Création et modification du profil
 
@@ -54,7 +54,7 @@ email
 
 Compression automatique de l’image
 
-📁 Gestion des projets
+### 📁 Gestion des projets
 
 Création d’un projet (image, name, demo URL, repo URL, description)
 
@@ -66,7 +66,7 @@ Association User → Profil → Projets
 
 API REST complète
 
-🌍 Page Portfolio publique
+### 🌍 Page Portfolio publique
 
 Chaque utilisateur possède une page publique :
 /portfolio/:profil_id
@@ -93,7 +93,7 @@ Support des URLs sécurisées
 
 Transformation des images selon l'environnement
 
-🧱 Stack utilisée
+## 🧱 Stack utilisée
 Frontend
 
 React 
@@ -183,7 +183,7 @@ npm run dev
 This is a solution to:(https:/https://devchallenges.io/challenge/user-portfolio-management). 
 
 
-🧑‍💻 Auteur
+## 🧑‍💻 Auteur
 
 Victoire Agboli (Full-Stack Developer)
 Projet créé avec passion et perfectionnisme, déployé en production.
