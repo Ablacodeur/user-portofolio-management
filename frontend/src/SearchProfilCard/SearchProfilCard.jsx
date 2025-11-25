@@ -24,7 +24,7 @@ export default function SearchProfilCard({ profil }) {
     <Card sx={{ width: 400, display: 'flex', flexDirection: 'row' }}>
       <Box sx={{ width: '40%' }}>
       <CardMedia
-        sx={{ height: '100%',width:'60%' }}
+        sx={{ height: '100%',width:'100%' }}
         image={imagePath}
         title={profil.sudoname}
       />
