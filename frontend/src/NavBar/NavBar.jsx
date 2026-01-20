@@ -4,7 +4,7 @@ import { Button } from "@mui/joy";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import logo_usm from '../assets/resources/Logo_USM.png'
+import logo_usm from '../assets/resources/LOGO-USM.png'
 
 
 export default function NavBar() {
